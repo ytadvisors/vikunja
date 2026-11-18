@@ -614,3 +614,9 @@ body { font-size: 15px; line-height: 1.5; }
 .fleet-home .recs .rec { padding: 12px 16px !important; }
 .fleet-home .block .ntable th, .fleet-home .block .ntable td { padding: 10px 16px !important; }
 .fleet-home .analytics .cards .card { padding: 16px !important; }
+// The left sidebar is white whether collapsed or open (Yomi 2026-11-18), with a hairline edge; hover and active rows use the one grey
+.menu-container, .menu-container .menu, .menu-container .rail-toggle.edge-toggle { background: #fff !important; }
+.menu-container { border-right: 1px solid var(--fx-line); }
+.menu-container .menu-list a:hover, .menu-container .menu-list a.router-link-active, .menu-container .rail-toggle.edge-toggle:hover { background: var(--fx-grey) !important; }
+:root.dark .menu-container, :root.dark .menu-container .menu, :root.dark .menu-container .rail-toggle.edge-toggle { background: #26262b !important; }
+:root.dark .menu-container .menu-list a:hover, :root.dark .menu-container .menu-list a.router-link-active { background: var(--fx-grey) !important; }
