@@ -26,6 +26,11 @@
 			<div class="tile"><span>Errors</span><b :class="{red: errTotal}">{{ errTotal }}</b><small>{{ range === '24h' ? 'last 24 hours' : 'last 7 days' }}</small></div>
 		</section>
 
+		<nav class="tabs live-tabs" role="tablist" aria-label="Live monitoring views">
+			<button type="button" role="tab" :aria-selected="view2 === 'availability'" :class="{on: view2 === 'availability'}" @click="view2 = 'availability'">Availability</button>
+			<button type="button" role="tab" :aria-selected="view2 === 'events'" :class="{on: view2 === 'events'}" @click="view2 = 'events'">Events<span class="badge">{{ rows.length }}</span></button>
+		</nav>
+		<template v-if="view2 === 'availability'">
 		<section v-if="!dev" class="card monitors">
 			<header><span>Availability, last 24 hours</span><span class="muted sm">one slot per 10-minute network scan</span></header>
 			<div v-for="m in monitorRows" :key="m.key" class="mon" @click="dev = m.key">
@@ -52,7 +57,8 @@
 			</div>
 			<div v-if="current.risks.length" class="risks"><b>Worth checking</b><div v-for="(r, i) in current.risks" :key="i" class="risk">{{ r }}</div></div>
 		</section>
-
+		</template>
+		<template v-else>
 		<div class="toolbar">
 			<select v-model="source" aria-label="Source"><option value="">All levels</option><option value="ok">Success</option><option value="error">Errors</option><option value="warn">Warnings</option></select>
 			<input v-model="q" type="search" placeholder="Filter by device, event or task number" aria-label="Filter events">
@@ -87,6 +93,7 @@
 			</table>
 			<div v-if="!rows.length" class="empty"><b>No events found</b>Events appear here as the hub records them.</div>
 		</section>
+		</template>
 	</div>
 </template>
 
@@ -114,6 +121,8 @@ const h = (n: number) => (n / max.value) * 92
 const okTotal = computed(() => buckets.value.reduce((a, b) => a + b.jobs + b.missions, 0))
 const errTotal = computed(() => buckets.value.reduce((a, b) => a + b.errors, 0))
 const dev = ref('')
+// Two views of the same data: availability over time, or the event log (Yomi 2026-11-18: no scrolling to reach events)
+const view2 = ref<'availability' | 'events'>('availability')
 const sys = computed<any>(() => (view.value as any)?.system || null)
 const net = computed<any>(() => (view.value as any)?.network || null)
 const fleetComputers = computed(() => (view.value?.computers || []).filter(c => c.state !== 'waiting for approval'))
