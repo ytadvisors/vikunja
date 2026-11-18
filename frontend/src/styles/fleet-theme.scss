@@ -774,3 +774,136 @@ body { font-size: 15px; line-height: 1.5; }
 .show-tasks-options .button { margin: 0 !important; }
 .show-tasks-options .fancy-checkbox, .show-tasks-options .base-checkbox { display: inline-flex !important; width: auto !important; }
 .fleet-page p.show-tasks-options { flex-direction: row !important; align-items: center !important; justify-content: flex-start !important; }
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// Task page, cleaned up (Yomi 2026-11-18: "Spacing for buttons on the task page are off ... clean up and organize. Separate
+// sections and keep focused"). Each part of the task is its own white block; the side panel is one column of full buttons.
+// ---------------------------------------------------------------------------------------------------------------------------
+.app-content .task-view .detail-content { background: transparent !important; border: 0 !important; padding: 0 !important; display: flex; flex-direction: column; gap: 12px; }
+.app-content .task-view .detail-content > .columns.details,
+.app-content .task-view .detail-content > .labels-list.details,
+.app-content .task-view .detail-content > .description,
+.app-content .task-view .detail-content > .content.details,
+.app-content .task-view .detail-content > .attachments:not(:empty) {
+  background: #fff; border: 1px solid var(--fx-line); border-radius: var(--fx-r); padding: 14px 16px !important; margin: 0 !important;
+}
+.app-content .task-view .detail-content > .attachments:has(> :only-child), .app-content .task-view .detail-content > .attachments[style*="none"] { display: none; }
+.app-content .task-view .detail-content > .reactions { margin: -4px 0 0 !important; padding: 0 4px !important; }
+.app-content .task-view .detail-content > .description h3, .app-content .task-view .detail-content > .content.details h3,
+.app-content .task-view .detail-content > .comments-container h3 { font-size: 14px !important; font-weight: 600 !important; margin: 0 0 10px !important; padding-bottom: 10px; border-bottom: 1px solid var(--border-light); }
+
+// Details fields: an even grid, small uppercase labels, grey remove buttons
+.app-content .task-view .columns.details { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px 16px; }
+.app-content .task-view .columns.details > .column { padding: 0 !important; width: auto !important; max-width: none !important; min-width: 0; }
+.app-content .task-view .detail-title { font-size: 11px !important; font-weight: 500 !important; text-transform: uppercase; letter-spacing: .06em; color: var(--text-light) !important; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.app-content .task-view .remove-assignee, .app-content .task-view .date-input .remove, .app-content .task-view .details .remove { color: var(--text-light) !important; opacity: .7; }
+.app-content .task-view .remove-assignee:hover, .app-content .task-view .details .remove:hover { color: #c4321f !important; opacity: 1; }
+.app-content .task-view .repeat-after-input .button-group { display: flex; flex-wrap: wrap; gap: 6px; }
+.app-content .task-view .repeat-after-input .button-group .button { margin: 0 !important; }
+
+// Side panel: one column of full-width buttons, grouped, nothing cut off
+.app-content .task-view .action-buttons.column { flex: 0 0 280px !important; width: 280px !important; max-width: 280px !important; grid-template-columns: 1fr !important; gap: 6px !important; padding: 14px !important; }
+.app-content .task-view .action-buttons .button { width: 100% !important; height: 32px; font-size: 13px !important; justify-content: flex-start !important; gap: 8px; white-space: nowrap; }
+.app-content .task-view .action-buttons .button .icon { width: 16px; justify-content: center; color: var(--text-light); }
+.app-content .task-view .action-buttons .button.button--mark-done { height: 36px; justify-content: center !important; margin-bottom: 4px !important; }
+.app-content .task-view .action-buttons .button.button--mark-done .icon { color: inherit; }
+.app-content .task-view .action-buttons .action-heading { margin: 10px 0 2px !important; padding-top: 10px !important; }
+.app-content .task-view .action-buttons .created { font-size: 11px; color: var(--text-light); margin-top: 8px; }
+// Links and actions are blue; text is dark (Yomi 2026-11-18: "differentiate between link / actions and text. The link for edit
+// should be blue as should other actions"). Values you click to change (dates, reminders) stay as text.
+.app-content .task-view a:not(.button):not(.tag),
+.app-content .task-view .base-button:not(.button):not(.simple-button):not(.remove):not(.remove-assignee):not(.collapse-project-button):not(.edge-toggle):not(.dropdown-item),
+.app-content .task-view .heading .base-button,
+.app-content .task-view .add-reminder, .app-content .task-view .reminders .base-button:not(.simple-button),
+.fleet-page .crumb a, .app-content .back-button {
+  color: #2383e2 !important;
+}
+.app-content .task-view a:not(.button):hover, .app-content .task-view .base-button:not(.button):not(.simple-button):hover, .fleet-page .crumb a:hover { color: #1b6fc2 !important; text-decoration: underline; }
+.app-content .task-view .heading .title, .app-content .task-view .heading .title * { color: var(--text-strong) !important; text-decoration: none !important; }
+.app-content .task-view .reminders > div:last-child > .simple-button, .app-content .task-view .reminders > .simple-button:last-child { color: #2383e2 !important; }
+.app-content .task-view .heading .base-button:first-child { color: var(--text-light) !important; text-decoration: none !important; }
+// Description Edit sits at the far right, blue; the Related Tasks "+" has room from the block's top; the task number is muted
+.app-content .task-view .description ul:has(> li > .done-edit) { display: flex !important; justify-content: flex-end; list-style: none; margin: 8px 0 0 !important; padding: 0 !important; }
+.app-content .task-view .description .done-edit { color: #2383e2 !important; font-weight: 500; }
+.app-content .task-view .add-task-relation-button { position: relative; top: 4px; margin: 0 0 8px 8px !important; }
+.app-content .task-view .task-relations { padding-top: 2px; }
+.app-content .task-view .task-properties .base-button:not(.bucket-name):not(.back-button) { color: var(--text-light) !important; text-decoration: none !important; }
+// The × remove buttons in a task are red, so nobody clicks them by accident (Yomi 2026-11-18); small and quiet in size
+.app-content .task-view .remove-assignee, .app-content .task-view .date-input .remove, .app-content .task-view .details .remove { color: #c4321f !important; opacity: 1 !important; }
+.app-content .task-view .remove-assignee:hover, .app-content .task-view .details .remove:hover { color: #9d2617 !important; }
+// The Comment button sits at the bottom right of the comment box
+.app-content .task-view .comments-container form .field:has(> .button.is-primary) { display: flex !important; justify-content: flex-end; margin-top: 8px; }
+.app-content .task-view .comments-container .form > .field:has(> .button.is-primary) { display: flex !important; justify-content: flex-end; margin-top: 8px; }
+// Done tasks: the number and "Done" become one tile, like a calendar icon: green band with white text over a white body
+// with the task number (Yomi 2026-11-18). Open tasks keep the plain number.
+.app-content .task-view .task-properties:has(> .is-done) { flex-direction: column-reverse !important; align-items: stretch !important; gap: 0 !important; border: 1px solid #1c7a3c; border-radius: 8px; overflow: hidden; background: #fff; min-width: 56px; align-self: flex-start; box-shadow: 0 1px 2px rgba(43, 34, 51, .06); }
+.app-content .task-view .task-properties > .is-done { border-radius: 0 !important; width: 100%; margin: 0 !important; padding: 2px 8px !important; background: #1c7a3c !important; color: #fff !important; font-size: 10px !important; font-weight: 700 !important; letter-spacing: .08em; text-transform: uppercase; text-align: center; line-height: 1.4; }
+.app-content .task-view .task-properties:has(> .is-done) > .base-button { padding: 4px 8px !important; font-size: 16px !important; font-weight: 700 !important; color: var(--text-strong) !important; text-align: center; justify-content: center; }
+// Task details: due date above reminders in the right-hand column (Yomi 2026-11-18); other fields flow on the left
+.app-content .task-view .columns.details { grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(240px, 1.2fr) !important; grid-auto-flow: row dense; }
+.app-content .task-view .columns.details > .col-due { grid-column: 4; grid-row: 1; }
+.app-content .task-view .columns.details > .col-reminders { grid-column: 4; grid-row: 2 / span 4; }
+.app-content .task-view .reminders-more { background: none; border: 0; padding: 4px 0; color: #2383e2; font: inherit; font-size: 13px; cursor: pointer; }
+.app-content .task-view .reminders-more:hover { text-decoration: underline; }
+.app-content .task-view .task-properties:has(> .is-done) > .base-button { display: block; width: 100%; }
+.app-content .back-button { margin-bottom: 14px !important; display: inline-flex !important; }
+.app-content .task-view .task-properties:has(> .is-done) > .base-button { text-align: center !important; justify-content: center !important; display: flex !important; }
+.app-content .task-view .task-properties:has(.is-done) .base-button { width: 100% !important; display: flex !important; justify-content: center !important; padding: 4px 6px !important; }
+.app-content .task-view .task-properties:has(.is-done) .task-id { margin: 0 auto !important; padding: 0 !important; text-align: center; font-size: 16px !important; font-weight: 700 !important; }
+.app-content .task-view .task-properties:has(.is-done) > * { align-self: stretch !important; }
+// Due date and reminders: all text starts at one left edge; the overdue mark and the × sit together on the right;
+// relative times start with a capital ("In an hour") (Yomi 2026-11-18)
+.app-content .task-view .col-due .date-input, .app-content .task-view .reminders .reminder-input { display: flex !important; align-items: center; gap: 6px; min-height: 26px; }
+.app-content .task-view .reminders .reminder-input > .reminder-detail { order: 1; flex: 1 1 auto; min-width: 0; }
+.app-content .task-view .reminders .reminder-input > .reminder-overdue { order: 2; margin: 0 !important; }
+.app-content .task-view .reminders .reminder-input > .remove, .app-content .task-view .col-due .date-input > .remove { order: 3; margin-left: auto; }
+.app-content .task-view .col-due .date-input > :not(.remove) { flex: 1 1 auto; }
+.app-content .task-view .reminders .simple-button, .app-content .task-view .col-due .simple-button, .app-content .task-view .reminders-more { padding-left: 0 !important; margin-left: 0 !important; text-align: left; }
+.app-content .task-view .reminders > .reminder-detail, .app-content .task-view .reminders > .reminder-detail .simple-button { padding-left: 0 !important; margin-left: 0 !important; }
+.app-content .task-view .reminders .simple-button, .app-content .task-view .col-due .simple-button { display: inline-block; }
+.app-content .task-view .reminders .simple-button::first-letter, .app-content .task-view .col-due .simple-button::first-letter { text-transform: uppercase; }
+// Menus: the selected item is white on blue; other items are normal text (Yomi 2026-11-18: selected "Done" was invisible)
+.dropdown-item.is-active, .app-content .task-view .dropdown-item.is-active { color: #fff !important; }
+.app-content .task-view .dropdown-item:not(.is-active) { color: var(--text) !important; text-decoration: none !important; }
+// Every remove × in a task is red, reminders included
+.app-content .task-view .reminders .remove, .app-content .task-view .reminders .remove * { color: #c4321f !important; }
+// Tighter sections: header straight onto its content (Yomi 2026-11-18: "too much space between the header and text")
+.app-content .task-view .detail-content > .description h3, .app-content .task-view .detail-content > .content.details h3,
+.app-content .task-view .detail-content > .comments-container h3 { margin: 0 0 6px !important; padding: 0 !important; border: 0 !important; }
+.app-content .task-view .detail-content > .description .tiptap, .app-content .task-view .detail-content > .description .editor,
+.app-content .task-view .detail-content > .description .tiptap__editor, .app-content .task-view .detail-content > .description > div { margin-top: 0 !important; padding-top: 0 !important; }
+.app-content .task-view .detail-content .tiptap__editor .ProseMirror > :first-child, .app-content .task-view .detail-content .tiptap p:first-child { margin-top: 0 !important; }
+.app-content .task-view .detail-content > .content.details .task-relations > .label, .app-content .task-view .related-tasks .label, .app-content .task-view .task-relations h4 { margin: 0 0 4px !important; }
+.app-content .task-view .detail-title { margin-bottom: 4px !important; }
+.app-content .task-view .detail-content > .columns.details, .app-content .task-view .detail-content > .labels-list.details,
+.app-content .task-view .detail-content > .description, .app-content .task-view .detail-content > .content.details { padding: 12px 16px !important; }
+// Headers start just under the 48 px toolbar on every page (Yomi 2026-11-18: "too far from the top of the page")
+@media screen and (min-width: 769px) {
+  .app-content { padding-top: 52px !important; }
+  .fleet-page { padding-top: 12px !important; }
+  .app-content .task-view-container .task-view { padding-top: 8px !important; }
+}
+// Repeat: quick choices on one left-aligned row, then "Repeat mode" and "Each" as aligned label / control rows (Yomi 2026-11-18)
+.app-content .task-view .repeat-after-input { display: flex; flex-direction: column; gap: 8px; }
+.app-content .task-view .repeat-after-input .button-group { justify-content: flex-start !important; margin: 0 !important; gap: 6px; flex-wrap: wrap; }
+.app-content .task-view .repeat-after-input .button-group .button { height: 26px !important; min-height: 26px; padding: 0 8px !important; font-size: 12px !important; margin: 0 !important; }
+.app-content .task-view .repeat-after-input > .is-flex { display: grid !important; grid-template-columns: 96px 1fr; align-items: center; gap: 8px; margin: 0 !important; }
+.app-content .task-view .repeat-after-input > .is-flex > label, .app-content .task-view .repeat-after-input > .is-flex > p { margin: 0 !important; padding: 0 !important; font-size: 13px; color: var(--text-light); white-space: nowrap; width: auto !important; }
+.app-content .task-view .repeat-after-input > .is-flex > .control, .app-content .task-view .repeat-after-input > .is-flex > .field { margin: 0 !important; display: flex; gap: 6px; }
+.app-content .task-view .repeat-after-input .select, .app-content .task-view .repeat-after-input .select select, .app-content .task-view .repeat-after-input .input { height: 30px !important; font-size: 13px !important; }
+.app-content .task-view .repeat-after-input .input { max-width: 72px; }
+// Details fields fill their column so every section's left and right edges line up (Yomi 2026-11-18)
+.app-content .task-view .columns.details > .column > *:not(.is-flex):not(.detail-title) { width: 100%; }
+.app-content .task-view .columns.details .select, .app-content .task-view .columns.details .select select,
+.app-content .task-view .columns.details .multiselect, .app-content .task-view .columns.details .input:not(.repeat-after-input .input),
+.app-content .task-view .columns.details .control:not(.repeat-after-input) { width: 100% !important; max-width: none !important; }
+.app-content .task-view .repeat-after-input > .is-flex > .control, .app-content .task-view .repeat-after-input > .is-flex > .field { width: 100%; }
+.app-content .task-view .repeat-after-input > .is-flex .select, .app-content .task-view .repeat-after-input > .is-flex .select select { width: 100% !important; }
+.app-content .task-view .repeat-after-input .input { max-width: none !important; flex: 1; }
+// The reaction button sits just left of Edit inside the description block
+.app-content .task-view .detail-content > .reactions { align-self: flex-end; margin: -46px 64px 22px 0 !important; position: relative; z-index: 1; padding: 0 !important; }
+.app-content .task-view .repeat-after-input .button-group { display: grid !important; grid-template-columns: repeat(3, 1fr); }
+.app-content .task-view .repeat-after-input .button-group .button { width: 100%; justify-content: center; }
+// Each field's header row spans its column, so the × lines up with the right edge of the boxes below it
+.app-content .task-view .columns.details > .column > .is-flex.is-justify-content-space-between { width: 100% !important; align-items: center; }
+.app-content .task-view .columns.details > .column > .is-flex.is-justify-content-space-between > .remove { margin-left: auto; padding-right: 0 !important; }

@@ -1,13 +1,13 @@
 <template>
 	<div class="reminders">
 		<div
-			v-for="(r, index) in reminders"
+			v-for="index in shownIndexes"
 			:key="index"
-			:data-is-overdue="isOverdue(r) || undefined"
+			:data-is-overdue="isOverdue(reminders[index]) || undefined"
 			class="reminder-input"
 		>
 			<OverdueIndicator
-				v-if="isOverdue(r)"
+				v-if="isOverdue(reminders[index])"
 				class="reminder-overdue mie-2"
 			/>
 			<ReminderDetail
@@ -28,6 +28,14 @@
 			</BaseButton>
 		</div>
 
+		<button
+			v-if="reminders.length > SHOWN"
+			type="button"
+			class="reminders-more"
+			@click="showAll = !showAll"
+		>
+			{{ showAll ? 'Show fewer' : `Show ${reminders.length - SHOWN} more` }}
+		</button>
 		<ReminderDetail
 			:disabled="disabled"
 			:clear-after-update="true"
@@ -39,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, watch} from 'vue'
+import {computed, ref, watch} from 'vue'
 
 import type {TaskReminder as ITaskReminder} from '@/client/generated'
 import type {IReminderPeriodRelativeTo} from '@/types/IReminderPeriodRelativeTo'
@@ -68,6 +76,14 @@ const emit = defineEmits<{
 }>()
 
 const reminders = ref<ITaskReminder[]>([])
+
+// Newest first; only the latest few unless the user asks for all (positions in `reminders` stay unchanged for editing)
+const SHOWN = 3
+const showAll = ref(false)
+const orderedIndexes = computed(() => reminders.value
+	.map((_, i) => i)
+	.sort((a, b) => (parseDateOrNull(reminders.value[b].reminder)?.getTime() ?? 0) - (parseDateOrNull(reminders.value[a].reminder)?.getTime() ?? 0)))
+const shownIndexes = computed(() => (showAll.value ? orderedIndexes.value : orderedIndexes.value.slice(0, SHOWN)))
 
 const now = useNow({interval: 1000})
 

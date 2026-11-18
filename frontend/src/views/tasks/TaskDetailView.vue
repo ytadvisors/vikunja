@@ -145,7 +145,7 @@
 						>
 							<div
 								v-if="activeFields.dueDate"
-								class="column"
+								class="column col-due"
 							>
 								<!-- Due Date -->
 								<div class="detail-title">
@@ -271,7 +271,7 @@
 						>
 							<div
 								v-if="activeFields.reminders"
-								class="column"
+								class="column col-reminders"
 							>
 								<!-- Reminders -->
 								<div class="detail-title">
