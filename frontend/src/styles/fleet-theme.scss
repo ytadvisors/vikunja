@@ -699,3 +699,4 @@ body { font-size: 15px; line-height: 1.5; }
 .nav2 .rail-logo { width: 40px !important; height: 40px !important; border-radius: 8px; background: #fdf1ee; border: 1px solid #f3d2ca; display: grid !important; place-items: center; margin-bottom: 10px; }
 .nav2 .rail-logo svg { width: 28px !important; height: 28px !important; }
 :root.dark .nav2 .rail-logo { background: #3a2622; border-color: #5a3329; }
+.fleet-page .project-header .project-search { flex: 1; max-width: 420px; height: 32px; border: 1px solid var(--fx-line); border-radius: var(--fx-r); padding: 0 10px; font: inherit; font-size: 14px; background: #fff; }

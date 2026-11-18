@@ -56,64 +56,6 @@
 			</button>
 		</nav>
 
-		<!-- Secondary panel: the pages of the selected area; collapsing hides it and keeps the rail -->
-		<div
-			v-if="hasPanel && (!sidebarRail || isMobile)"
-			class="panel2"
-		>
-			<header class="p2-head">
-				{{ SECTION_TITLE[section] }}
-			</header>
-
-			<template v-if="section === 'tasks'">
-
-
-				<Loading
-					v-if="projectList.isLoading"
-					variant="small"
-				/>
-				<template v-else>
-					<p
-						v-if="savedFilterProjects.length"
-						class="p2-group"
-					>
-						Saved filters
-					</p>
-					<nav
-						v-if="savedFilterProjects.length"
-						class="menu"
-						:aria-label="$t('navigation.savedFilters')"
-					>
-						<ProjectsNavigation
-							:model-value="savedFilterProjects"
-							:can-edit-order="false"
-							:can-collapse="false"
-						/>
-					</nav>
-					<ProjectFinder />
-				</template>
-			</template>
-
-			<div class="p2-foot">
-				<button
-					v-if="!isMobile"
-					type="button"
-					class="p2-collapse"
-					title="Hide the side panel"
-					aria-label="Hide the side panel"
-					@click="toggleSidebarRail"
-				>
-					« <span>Collapse</span>
-				</button>
-			</div>
-		</div>
-
-		<div
-			v-if="!isMobile && !sidebarRail && hasPanel"
-			class="resize-handle"
-			@mousedown="startResize"
-			@touchstart="startResize"
-		/>
 	</aside>
 </template>
 
@@ -123,14 +65,11 @@ import {useRoute} from 'vue-router'
 
 import {SHORTCUTS} from '@/constants/shortcuts'
 import LogoMark from '@/assets/fleet-mark.svg?component'
-import Loading from '@/components/misc/Loading.vue'
 
 import {useBaseStore} from '@/stores/base'
 import {useProjects} from '@/composables/useProjects'
 import {useConfigStore} from '@/stores/config'
 import {PRO_FEATURE} from '@/constants/proFeatures'
-import ProjectsNavigation from '@/components/home/ProjectsNavigation.vue'
-import ProjectFinder from '@/components/fleet/ProjectFinder.vue'
 import {useSidebarResize, sidebarRail, toggleSidebarRail, panelAbsent} from '@/composables/useSidebarResize'
 
 // Two-level navigation after Sentry (Yomi 2026-11-18: "I like the sentry design for the left panel. Can't we copy that?"):
@@ -140,6 +79,7 @@ const RAIL = [
 	{key: 'tasks', label: 'Tasks', icon: 'calendar', color: '#e03e3e', to: {name: 'fleet.overview'}, shortcut: SHORTCUTS.navigation.overview},
 	{key: 'devices', label: 'Devices', icon: 'sitemap', color: '#0f7b6c', to: {name: 'fleet.devices'}, shortcut: undefined},
 	{key: 'models', label: 'Models', icon: 'layer-group', color: '#ad1a72', to: {name: 'fleet.models'}, shortcut: undefined},
+	{key: 'fleet', label: 'Fleet', icon: 'tachometer-alt', color: '#e16b16', to: {name: 'fleet.home'}, shortcut: undefined},
 	{key: 'teams', label: 'Teams', icon: 'users', color: '#d9730d', to: {name: 'teams.index'}, shortcut: SHORTCUTS.navigation.teams},
 ]
 const SECTION_TITLE: Record<string, string> = {tasks: 'Projects'}
@@ -150,7 +90,8 @@ const routeName = computed(() => String(route.name || ''))
 // The area the current page belongs to: picks the secondary panel's contents.
 const section = computed(() => {
 	const n = routeName.value
-	if (/^fleet\.(home|live|mission)/.test(n)) return 'monitoring'
+	if (/^fleet\.(home|mission)/.test(n)) return 'fleet'
+	if (n.startsWith('fleet.live')) return 'monitoring'
 	if (n.startsWith('fleet.devices')) return 'devices'
 	if (n.startsWith('fleet.models')) return 'models'
 	if (n.startsWith('teams')) return 'teams'
@@ -158,9 +99,9 @@ const section = computed(() => {
 	return 'tasks'
 })
 const activeRail = section
-// Only Tasks needs a second column (its projects); every other area shows its sections as tabs inside the page, so nothing
-// on the left repeats the rail (Yomi 2026-11-18).
-const hasPanel = computed(() => section.value === 'tasks')
+// The left side is static navigation only; content (projects, filters) lives in the page (Yomi 2026-11-18: "Left navigation
+// links need to be static links! Content is in the right panel, navigation (static) is on the left.").
+const hasPanel = computed(() => false)
 watchEffect(() => {
 	panelAbsent.value = !hasPanel.value
 })

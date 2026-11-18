@@ -13,6 +13,13 @@
 		</header>
 		<WorkTabs />
 		<div class="toolbar project-header">
+			<input
+				v-model="search"
+				type="search"
+				class="project-search"
+				placeholder="Find a project"
+				aria-label="Find a project"
+			>
 			<FancyCheckbox
 				v-model="showArchived"
 				v-cy="'show-archived-check'"
@@ -46,7 +53,7 @@
 
 <script setup lang="ts">
 import WorkTabs from '@/components/fleet/WorkTabs.vue'
-import {computed} from 'vue'
+import {computed, ref} from 'vue'
 import {useI18n} from 'vue-i18n'
 
 import FancyCheckbox from '@/components/input/FancyCheckbox.vue'
@@ -65,10 +72,14 @@ useTitle(() => t('project.projects'))
 const showArchived = useStorage('showArchived', false)
 
 const loading = useDelayedLoading(() => projectList.isLoading)
+// Finding a project happens here, in the content area (the left side is static navigation only).
+const search = ref('')
 const projects = computed(() => {
-	return showArchived.value
+	const all = showArchived.value
 		? projectList.projectsArray
 		: projectList.projectsArray.filter(({is_archived}) => !is_archived)
+	const needle = search.value.trim().toLowerCase()
+	return needle ? all.filter(p => (p.title || '').toLowerCase().includes(needle)) : all
 })
 </script>
 

@@ -1,6 +1,6 @@
 <template>
 	<div class="fleet-page">
-		<p class="crumb">Monitoring / {{ view2 === 'events' ? 'Events' : 'Availability' }}</p>
+		<p class="crumb">Monitoring / {{ view2 === 'events' ? 'Events' : view2 === 'issues' ? 'Issues' : 'Availability' }}</p>
 		<header class="page-head">
 			<div>
 				<h1><span class="h-icon" style="--c:#2383e2">◉</span>Monitoring</h1>
@@ -54,6 +54,24 @@
 			</div>
 			<div v-if="current.risks.length" class="risks"><b>Worth checking</b><div v-for="(r, i) in current.risks" :key="i" class="risk">{{ r }}</div></div>
 		</section>
+		</template>
+		<template v-else-if="view2 === 'issues'">
+			<section class="card issues">
+				<table class="ntable">
+					<thead><tr><th>Issue</th><th>Level</th><th>Events</th><th>Trend, 24 h</th><th>First seen</th><th>Last seen</th></tr></thead>
+					<tbody>
+						<tr v-for="g in issues" :key="g.key">
+							<td><b class="iss-what">{{ g.what }}</b><small class="muted">{{ g.who }}</small></td>
+							<td><span :class="['lv', g.level]">{{ g.level === 'error' ? 'error' : 'warning' }}</span></td>
+							<td>{{ g.count }}</td>
+							<td class="trend-cell"><svg viewBox="0 0 100 20" preserveAspectRatio="none" class="trend"><path :d="trendPath(g.trend)" /></svg></td>
+							<td class="muted">{{ ago(g.first) }}</td>
+							<td class="muted">{{ ago(g.last) }}</td>
+						</tr>
+					</tbody>
+				</table>
+				<div v-if="!issues.length" class="empty"><b>No issues</b>Warnings and errors from the hub, the computers and the network appear here, grouped.</div>
+			</section>
 		</template>
 		<template v-else>
 		<div class="toolbar">
@@ -122,7 +140,29 @@ const errTotal = computed(() => buckets.value.reduce((a, b) => a + b.errors, 0))
 const dev = ref('')
 // Two views of the same data: availability over time, or the event log (Yomi 2026-11-18: no scrolling to reach events)
 const route = useRoute()
-const view2 = computed<'availability' | 'events'>(() => (route.query.tab === 'events' ? 'events' : 'availability'))
+const view2 = computed<'availability' | 'events' | 'issues'>(() => (['events', 'issues'].includes(String(route.query.tab)) ? route.query.tab as any : 'availability'))
+// Issues (after Sentry): the same event on the same source folded into one row, with counts, first and last seen and a
+// 24-hour trend, so a recurring problem shows once instead of as many log lines.
+const issues = computed(() => {
+	const now = Date.now()
+	const groups: Record<string, any> = {}
+	for (const l of (view.value?.log || []) as any[]) {
+		if (!['warn', 'error'].includes(l.level)) continue
+		const key = `${l.what}|${l.who || 'hub'}`
+		const g = groups[key] || (groups[key] = {key, what: l.what, who: l.who || 'hub', level: l.level, count: 0, first: l.ts, last: l.ts, trend: Array(24).fill(0), task: l.task})
+		g.count++
+		if (l.level === 'error') g.level = 'error'
+		if (l.ts < g.first) g.first = l.ts
+		if (l.ts > g.last) g.last = l.ts
+		const h = Math.floor((now - Date.parse(l.ts)) / 3600000)
+		if (h >= 0 && h < 24) g.trend[23 - h]++
+	}
+	return Object.values(groups).sort((a: any, b: any) => (a.level === b.level ? b.last.localeCompare(a.last) : a.level === 'error' ? -1 : 1))
+})
+const trendPath = (v: number[]) => {
+	const m = Math.max(1, ...v)
+	return v.map((x, i) => `${i === 0 ? 'M' : 'L'}${(i / 23) * 100},${20 - (x / m) * 18}`).join(' ')
+}
 const sys = computed<any>(() => (view.value as any)?.system || null)
 const net = computed<any>(() => (view.value as any)?.network || null)
 const fleetComputers = computed(() => (view.value?.computers || []).filter(c => c.state !== 'waiting for approval'))
@@ -267,4 +307,9 @@ onUnmounted(() => stop())
 .mon-name small { font-size: 12px; }
 .mon-pct { text-align: right; font-size: 12px; }
 .sm { font-size: 12px; font-weight: 400; }
+.issues td { vertical-align: middle; }
+.iss-what { display: block; font-weight: 500; color: var(--text-strong); }
+.trend-cell { width: 160px; }
+.trend { width: 140px; height: 20px; display: block; }
+.trend path { fill: none; stroke: #6c5fc7; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
 </style>
