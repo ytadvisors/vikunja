@@ -4,7 +4,7 @@
 		<header class="head">
 			<div>
 				<h1><span class="h-icon" style="--c:#0f7b6c">▣</span>Devices</h1>
-				<p class="sub">The computers enrolled in the fleet: their state, what they run, what they have done, and what needs attention.</p>
+				<p class="sub">Fleet computers paired with the hub, which you moderate, and every other device on your network, watched read only.</p>
 			</div>
 		</header>
 
@@ -16,26 +16,51 @@
 
 		<template v-if="tab === 'devices' && view">
 			<div class="toolbar">
-				<input v-model="q" type="search" placeholder="Search name, chip, model or address" aria-label="Search devices">
-				<select v-model="stateFilter" aria-label="Filter by state"><option value="">All states</option><option>connected</option><option>not connected</option><option>waiting for approval</option><option>paused</option></select>
+				<input v-model="q" type="search" placeholder="Search name, type, maker or address" aria-label="Search devices">
+				<select v-model="stateFilter" aria-label="Filter by state"><option value="">All devices</option><option value="connected">Online</option><option value="not connected">Offline</option><option value="paused">Paused</option></select>
 			</div>
-			<div v-if="!devices.length" class="onboard">
-				<h3>Enroll your first computer</h3>
-				<p>Install the station on a computer on this network, then approve its pairing code here. See the Enrollment tab.</p>
-				<button type="button" class="primary" @click="tab = 'enroll'">Add a device</button>
-			</div>
-			<table v-else class="ntable">
-				<thead><tr><th>Device</th><th>Status</th><th>System</th><th>Chip</th><th>Memory</th><th>Local model</th><th>Jobs</th><th>Last seen</th></tr></thead>
+			<h2 class="sec"><span class="sec-i" style="--c:#0f7b6c">▣</span>Fleet computers <span class="badge">{{ fleet.length }}</span><small>Paired with the hub: they take work, run local models and report back. You moderate them.</small></h2>
+			<table class="ntable">
+				<thead><tr><th>Computer</th><th>Status</th><th>Hardware</th><th>Model</th><th>Address</th><th>Work done</th><th>Last job</th><th class="r">Moderate</th></tr></thead>
 				<tbody>
-					<tr v-for="c in devices" :key="c.name" :class="{sel: sel === c.name}" @click="sel = c.name">
-						<td class="name"><span class="dev">▣</span>{{ c.name }}</td>
+					<tr v-for="c in fleet" :key="c.name" :class="{sel: sel === (c.address || c.name)}" @click="sel = c.address || c.name">
+						<td class="name"><span class="dev" style="color:#0f7b6c">▣</span>{{ c.name }}<small class="member">{{ c.member }}</small></td>
 						<td><span :class="['pill', stateCls(c.state)]"><i />{{ c.state }}</span></td>
-						<td>{{ c.system || '?' }}</td><td>{{ c.chip || '?' }}</td><td>{{ c.memory_gb ?? '?' }} GB</td><td>{{ c.model || '–' }}</td><td>{{ c.jobs }}</td>
-						<td class="muted">{{ c.state === 'connected' ? 'now' : ago(c.last_job) }}</td>
+						<td class="muted">{{ c.chip || '?' }} · {{ c.memory_gb ?? '?' }} GB</td>
+						<td>{{ c.model || '–' }}</td>
+						<td class="mono">{{ c.address || '–' }}</td>
+						<td class="muted">{{ c.jobs }} jobs</td>
+						<td class="muted">{{ c.last_job ? ago(c.last_job) : '–' }}</td>
+						<td class="r mod" @click.stop>
+							<button v-if="c.state !== 'paused'" type="button" class="ghost" :disabled="!!asked[c.name]" @click="ask('pause', c.name)">Pause</button>
+							<button v-else type="button" class="ghost" :disabled="!!asked[c.name]" @click="ask('resume', c.name)">Resume</button>
+							<button type="button" class="ghost danger" :disabled="!!asked[c.name]" @click="confirmRemove = c.name">Remove</button>
+						</td>
+					</tr>
+					<tr v-if="confirmRemove" class="confirm"><td colspan="8">Remove <b>{{ confirmRemove }}</b> from the fleet? It stops taking work at once and its access is turned off. It stays on the network and can pair again later; its history is kept. <button type="button" class="ghost danger" @click="ask('remove', confirmRemove); confirmRemove = ''">Remove</button> <button type="button" class="ghost" @click="confirmRemove = ''">Cancel</button></td></tr>
+				</tbody>
+			</table>
+			<p v-if="!fleet.length" class="empty">No computer is paired yet. Add one from Enrollment.</p>
+			<p v-for="(v, k) in asked" :key="k" :class="['modmsg', v.error ? 'bad' : '']">{{ k }}: <template v-if="v.error">{{ v.error }}</template><template v-else>{{ v.action }} recorded on <RouterLink :to="{name: 'task.detail', params: {id: v.task}}">#{{ v.task }}</RouterLink>; the hub acts on it within seconds (only the owner's moderation is carried out).</template></p>
+
+			<h2 class="sec mt"><span class="sec-i" style="--c:#2383e2">⌂</span>Network devices <span class="badge">{{ others.length }}</span><small>Everything else the hub sees on your network. Watched read only: it is never logged in to or changed.</small></h2>
+			<p v-if="net" class="scan">Network {{ net.network }} · {{ net.online }} of {{ net.devices.length }} devices online · {{ net.with_risks }} with something to check · last scanned {{ ago(net.scanned_at) }} (every 10 minutes, read only)</p>
+			<p v-else class="notice">The network monitor has not reported yet.</p>
+			<table class="ntable">
+				<thead><tr><th>Device</th><th>Status</th><th>Type</th><th>Address</th><th>Open services</th><th>Firmware</th><th>Attention</th><th>Last seen</th></tr></thead>
+				<tbody>
+					<tr v-for="d in others" :key="d.ip" :class="{sel: sel === d.ip, off: !d.online}" @click="sel = d.ip">
+						<td class="name"><span class="dev" :style="{color: typeColor(d.type)}">{{ typeIcon(d.type) }}</span>{{ d.label }}<span v-if="d.kind !== 'network device'" class="role">{{ d.kind }}</span></td>
+						<td><span :class="['pill', d.online ? 'ok' : 'bad']"><i />{{ d.online ? 'online' : 'offline' }}</span></td>
+						<td>{{ d.type }}<small v-if="d.maker && d.maker !== 'unknown'" class="muted"> · {{ d.maker }}</small></td>
+						<td class="mono">{{ d.ip }}</td>
+						<td class="muted">{{ d.ports.length ? d.ports.length + ' open' : '–' }}</td>
+						<td class="muted">{{ d.firmware || 'not reported' }}</td>
+						<td><span v-if="d.risks.length" class="pill warn"><i />{{ d.risks.length }}</span><span v-else class="muted">–</span></td>
+						<td class="muted">{{ d.online ? 'now' : ago(d.last_seen) }}</td>
 					</tr>
 				</tbody>
 			</table>
-
 			<section v-if="recs.length" class="recs">
 				<h2>Recommendations <span class="badge">{{ recs.length }}</span></h2>
 				<div class="rec-cards">
@@ -82,33 +107,50 @@
 			<div v-for="c in pending" :key="c.name" class="li"><b>{{ c.name }}</b><span class="muted">{{ c.address }} · {{ c.chip }} · {{ c.memory_gb }} GB</span></div>
 		</template>
 
-		<aside v-if="selDevice" class="panel" aria-label="Device details">
-			<header><h2>{{ selDevice.name }}</h2><span :class="['pill', stateCls(selDevice.state)]"><i />{{ selDevice.state }}</span><button type="button" class="ghost close" @click="sel = ''">Close</button></header>
+		<aside v-if="selNet || selDevice" class="panel" aria-label="Device details">
+			<header><h2>{{ selNet?.label || selDevice?.name }}</h2><span :class="['pill', (selNet ? selNet.online : selDevice?.state === 'connected') ? 'ok' : 'bad']"><i />{{ (selNet ? selNet.online : selDevice?.state === 'connected') ? 'online' : 'offline' }}</span><button type="button" class="ghost close" @click="sel = ''">Close</button></header>
+			<p class="kind-line">{{ selDevice ? 'Fleet computer, paired with the hub' : 'Network device, watched read only' }}</p>
 			<div class="cmd">
-				<RouterLink class="primary" :to="{name: 'fleet.home'}">Give this fleet a task</RouterLink>
-				<button type="button" class="ghost" disabled title="Comes with enforced station identity (plan step 4)">Pause</button>
+				<RouterLink class="primary" :to="{name: 'fleet.home'}">Ask the fleet about it</RouterLink>
+				<template v-if="selDevice">
+					<button v-if="selDevice.state !== 'paused'" type="button" class="ghost" @click="ask('pause', selDevice.name)">Pause</button>
+					<button v-else type="button" class="ghost" @click="ask('resume', selDevice.name)">Resume</button>
+					<button type="button" class="ghost danger" @click="confirmRemove = selDevice.name; tab = 'devices'">Remove</button>
+				</template>
 			</div>
 			<dl class="ess">
-				<div><dt>Status</dt><dd>{{ selDevice.state }}{{ selDevice.since ? ' since ' + ago(selDevice.since) : '' }}</dd></div>
-				<div><dt>System</dt><dd>{{ selDevice.system }}</dd></div>
-				<div><dt>Chip</dt><dd>{{ selDevice.chip }}</dd></div>
-				<div><dt>Memory</dt><dd>{{ selDevice.memory_gb }} GB</dd></div>
-				<div><dt>Local model</dt><dd>{{ selDevice.model || '–' }}</dd></div>
-				<div><dt>Address</dt><dd>{{ selDevice.address }}</dd></div>
-				<div><dt>Team member</dt><dd>{{ selDevice.member || 'not yet' }}</dd></div>
-				<div><dt>Work done</dt><dd>{{ selDevice.jobs }} jobs · {{ selDevice.seconds }} s · {{ selDevice.tokens }} tokens</dd></div>
-				<div><dt>Last checked</dt><dd>{{ ago(selDevice.checked) }}</dd></div>
+				<template v-if="selNet">
+					<div><dt>What it is</dt><dd>{{ selNet.type }}<template v-if="selNet.maker && selNet.maker !== 'unknown'"> · {{ selNet.maker }}</template><template v-if="selNet.model && selNet.model !== 'unknown'"> {{ selNet.model }}</template><small v-if="selNet.why" class="guess">Local model's guess: {{ selNet.why }}</small></dd></div>
+					<div><dt>Role</dt><dd>{{ selNet.kind }}</dd></div>
+					<div><dt>Address</dt><dd class="mono">{{ selNet.ip }}</dd></div>
+					<div><dt>Hardware address</dt><dd class="mono">{{ selNet.mac || 'not visible' }}<small v-if="selNet.private_address" class="guess">private (randomised) address</small></dd></div>
+					<div><dt>Firmware</dt><dd>{{ selNet.firmware || 'not reported by the device' }}</dd></div>
+					<div><dt>First seen</dt><dd>{{ ago(selNet.first_seen) }}</dd></div>
+					<div><dt>Last seen</dt><dd>{{ selNet.online ? 'now' : ago(selNet.last_seen) }}</dd></div>
+					<div v-if="selNet.names.length"><dt>Announces itself as</dt><dd>{{ selNet.names.join(' · ') }}</dd></div>
+					<div v-if="selNet.services.length"><dt>Network services</dt><dd>{{ selNet.services.join(', ') }}</dd></div>
+					<div><dt>Open ports</dt><dd>{{ selNet.ports.join(', ') || 'none of the common ones' }}</dd></div>
+					<div v-if="selNet.web.title || selNet.web.server"><dt>Web page</dt><dd>{{ selNet.web.title }}<small v-if="selNet.web.server" class="guess">server: {{ selNet.web.server }}</small></dd></div>
+				</template>
+				<template v-if="selDevice">
+					<div><dt>Fleet station</dt><dd>{{ selDevice.member || 'pairing' }} · {{ selDevice.model || 'no local model' }}</dd></div>
+					<div><dt>Work done</dt><dd>{{ selDevice.jobs }} jobs · {{ selDevice.seconds }} s · {{ selDevice.tokens }} tokens</dd></div>
+				</template>
 			</dl>
-			<h3>Recent activity</h3>
+			<template v-if="selNet?.risks.length">
+				<h3>Worth checking</h3>
+				<div v-for="(r, i) in selNet.risks" :key="i" class="risk">{{ r }}</div>
+			</template>
+			<h3>Activity</h3>
 			<div v-for="(l, i) in selLog" :key="i" class="act"><span :class="['lv', l.level]" /><span class="muted">{{ ago(l.ts) }}</span> {{ l.what }} <span class="muted">{{ l.detail }}</span></div>
-			<div v-if="!selLog.length" class="empty">No activity recorded.</div>
+			<div v-if="!selLog.length" class="empty">No activity recorded yet.</div>
 		</aside>
 	</div>
 </template>
 
 <script setup lang="ts">
-import {computed, onMounted, onUnmounted, ref} from 'vue'
-import {CONSOLE_URL, ago, fleetView, onFleetChange, type FleetView} from '@/fleet/api'
+import {computed, onMounted, onUnmounted, reactive, ref} from 'vue'
+import {CONSOLE_URL, ago, escapeHtml, fleetView, onFleetChange, stationProjects, vkPost, vkPut, type FleetView} from '@/fleet/api'
 
 const view = ref<(FleetView & {checks_catalog?: any[]}) | null>(null)
 const tab = ref<'devices' | 'profiles' | 'enroll'>('devices')
@@ -126,12 +168,42 @@ const devices = computed(() => all.value.filter(c => c.state !== 'waiting for ap
 const pending = computed(() => all.value.filter(c => c.state === 'waiting for approval'))
 const recs = computed(() => view.value?.recommendations || [])
 const tabs = computed(() => [
-	{key: 'devices' as const, label: 'Your devices', count: all.value.length - pending.value.length},
+	{key: 'devices' as const, label: 'Your devices', count: fleet.value.length + others.value.length},
 	{key: 'profiles' as const, label: 'Device profile'},
 	{key: 'enroll' as const, label: 'Enrollment', count: pending.value.length},
 ])
-const selDevice = computed(() => all.value.find(c => c.name === sel.value) || null)
-const selLog = computed(() => (view.value?.log || []).filter(l => l.who === sel.value).slice(0, 12))
+const net = computed(() => (view.value as any)?.network || null)
+const netRows = computed<any[]>(() => (net.value?.devices || []).filter((d: any) =>
+	(!stateFilter.value || (stateFilter.value === 'connected' ? d.online : stateFilter.value === 'not connected' ? !d.online : true)) &&
+	(!q.value || JSON.stringify(d).toLowerCase().includes(q.value.toLowerCase()))))
+const fleetIps = computed(() => new Set(all.value.map(c => c.address).filter(Boolean)))
+const fleet = computed(() => devices.value.filter(c => c.state !== 'waiting for approval'))
+const others = computed(() => netRows.value.filter((d: any) => !fleetIps.value.has(d.ip)))
+const asked = reactive<Record<string, {action: string, task?: number, error?: string}>>({})
+const confirmRemove = ref('')
+
+// Moderation is a task the owner creates and closes in S Stations; the hub acts only when the owner did both, so it is on the record.
+async function ask(action: 'pause' | 'resume' | 'remove', name: string) {
+	asked[name] = {action}
+	try {
+		const p = (await stationProjects())[0]
+		if (!p) {
+			throw new Error('no S Stations project is visible to you')
+		}
+		const t = await vkPut<any>(`/projects/${p.id}/tasks`, {title: `Moderate: ${action} ${name}`, description: `<p>${action} the fleet computer ${escapeHtml(name)}, from Fleet HQ Devices.</p>`})
+		await vkPost(`/tasks/${t.id}`, {...t, done: true})
+		asked[name] = {action: {pause: 'Pause', resume: 'Resume', remove: 'Removal'}[action], task: t.id}
+	} catch (e: any) {
+		asked[name] = {action, error: 'could not record it: ' + (e?.message || e)}
+	}
+}
+const selNet = computed<any>(() => (net.value?.devices || []).find((d: any) => d.ip === sel.value) || null)
+const selDevice = computed(() => all.value.find(c => c.address === sel.value || c.name === sel.value) || null)
+const selLog = computed(() => (view.value?.log || []).filter(l => l.who === (selDevice.value?.name || selNet.value?.label) || l.who === sel.value || (l.detail || '').includes(sel.value + ' ')).slice(0, 14))
+const ICONS: Record<string, [string, string]> = {router: ['⌂', '#2383e2'], 'network gear': ['⌂', '#2383e2'], computer: ['▣', '#0f7b6c'], phone: ['▯', '#9065b0'], tablet: ['▭', '#9065b0'],
+	printer: ['⎙', '#d9730d'], camera: ['◉', '#e03e3e'], tv: ['▬', '#ad1a72'], speaker: ['♪', '#ad1a72'], 'smart home': ['◈', '#448361'], nas: ['▤', '#2383e2'], 'game console': ['◆', '#9065b0']}
+const typeIcon = (t: string) => (ICONS[t] || ['•', '#9b9a97'])[0]
+const typeColor = (t: string) => (ICONS[t] || ['•', '#9b9a97'])[1]
 const stateCls = (s: string) => (s === 'connected' ? 'ok' : s === 'not connected' ? 'bad' : 'warn')
 
 async function refresh() {
@@ -213,4 +285,24 @@ pre { margin: .5rem 0 0; background: var(--fleet-sidebar, #f7f6f3); border-radiu
 .paths b { display: block; color: var(--text-strong); }
 .paths small { color: var(--text-light); }
 .notice.ok { background: #dbeddb; color: #1c3829; }
+.scan { color: var(--text-light); font-size: .85rem; margin: 0 0 .6rem; }
+.role { margin-inline-start: .5rem; font-size: .72rem; font-weight: 600; color: #0f7b6c; background: #dbeddb; border-radius: 4px; padding: 0 .35rem; }
+tr.off td { opacity: .55; }
+.mono { font-family: ui-monospace, Menlo, monospace; font-size: .82rem; }
+.guess { display: block; color: var(--text-light); font-size: .78rem; }
+.risk { margin: 0 1.1rem .4rem; padding: .5rem .7rem; border-radius: 8px; background: #fdecc8; color: #402c1b; font-size: .85rem; }
+.sec { display: flex; align-items: baseline; gap: .5rem; flex-wrap: wrap; font-size: 1.05rem; font-weight: 600; color: var(--text-strong); margin: .4rem 0 .5rem; }
+.sec small { flex-basis: 100%; font-weight: 400; font-size: .84rem; color: var(--text-light); }
+.sec.mt { margin-top: 1.8rem; }
+.sec-i { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 6px; font-size: .8rem; color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); align-self: center; }
+.r { text-align: right; }
+.mod { white-space: nowrap; }
+.mod .ghost, .cmd .ghost { border: 1px solid var(--border); background: var(--white); border-radius: 6px; padding: .2rem .55rem; font: inherit; font-size: .8rem; cursor: pointer; color: var(--text-strong); margin-inline-start: .25rem; }
+.ghost.danger { color: #c4321f; }
+.ghost:disabled { opacity: .45; cursor: default; }
+tr.confirm td { background: #fdf3f1; font-size: .86rem; }
+.modmsg { font-size: .84rem; color: #1c3829; margin: .4rem 0 0; }
+.modmsg.bad { color: #5d1715; }
+.member { margin-inline-start: .5rem; font-size: .74rem; color: var(--text-light); font-family: ui-monospace, Menlo, monospace; }
+.kind-line { margin: -.2rem 1.1rem .6rem; font-size: .8rem; color: var(--text-light); }
 </style>

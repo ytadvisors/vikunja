@@ -50,7 +50,7 @@ const router = createRouter({
 		{
 			path: '/',
 			name: 'home',
-			component: () => import('@/views/Home.vue'),
+			redirect: {name: 'fleet.home'},
 		},
 		{
 			path: '/:pathMatch(.*)*',
@@ -433,6 +433,16 @@ const router = createRouter({
 			path: '/fleet/devices',
 			name: 'fleet.devices',
 			component: () => import('@/views/fleet/FleetDevices.vue'),
+		},
+		{
+			path: '/fleet/models',
+			name: 'fleet.models',
+			component: () => import('@/views/fleet/FleetModels.vue'),
+		},
+		{
+			path: '/fleet/overview',
+			name: 'fleet.overview',
+			component: () => import('@/views/Home.vue'),
 		},
 		{
 			path: '/fleet/live',

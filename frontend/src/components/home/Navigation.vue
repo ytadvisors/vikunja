@@ -36,6 +36,14 @@
 					</RouterLink>
 				</li>
 				<li>
+					<RouterLink :to="{ name: 'fleet.models'}">
+						<span class="menu-item-icon icon">
+							<Icon icon="layer-group" />
+						</span>
+						Models
+					</RouterLink>
+				</li>
+				<li>
 					<RouterLink :to="{ name: 'fleet.live'}">
 						<span class="menu-item-icon icon">
 							<Icon icon="bolt" />
@@ -46,7 +54,7 @@
 				<li>
 					<RouterLink
 						v-shortcut="SHORTCUTS.navigation.overview"
-						:to="{ name: 'home'}"
+						:to="{ name: 'fleet.overview'}"
 					>
 						<span class="menu-item-icon icon">
 							<Icon icon="calendar" />
