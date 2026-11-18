@@ -727,3 +727,50 @@ body { font-size: 15px; line-height: 1.5; }
 .labels-drawer .crumb, .labels-drawer .page-head, .labels-drawer .work-tabs { display: none !important; }
 .labels-drawer .columns { display: block !important; }
 .labels-drawer .columns > .column { width: 100% !important; max-width: none !important; padding: 0 !important; margin-bottom: 12px; }
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// Project Table and Gantt, modernised (Yomi 2026-11-18: "update the table and gantt chart for the projects. Try to modernize it")
+// ---------------------------------------------------------------------------------------------------------------------------
+// Table: quiet header, dark titles (not blue links), 40 px rows, muted ids and dates, Done as a check on the far right
+.project-table .card { background: #fff !important; border: 1px solid var(--fx-line) !important; border-radius: var(--fx-r) !important; overflow: hidden; padding: 0 !important; }
+.project-table table.table { border-collapse: collapse !important; border-spacing: 0 !important; background: #fff !important; }
+.project-table table.table thead th { background: var(--fx-grey) !important; border-bottom: 1px solid var(--fx-line) !important; padding: 8px 12px !important; white-space: nowrap; }
+.project-table table.table tbody tr { box-shadow: none !important; background: #fff; }
+.project-table table.table tbody tr:hover { background: var(--fx-grey) !important; }
+.project-table table.table tbody td { padding: 8px 12px !important; border-bottom: 1px solid var(--border-light) !important; border-radius: 0 !important; vertical-align: middle; height: 40px; }
+.project-table table.table tbody td a { color: var(--text-strong) !important; font-weight: 500; text-decoration: none; }
+.project-table table.table tbody td a:hover { color: #2383e2 !important; }
+.project-table table.table tbody td:first-child a { color: var(--text-light) !important; font-weight: 400; font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+.project-table table.table tbody td time, .project-table table.table tbody td .date { color: var(--text-light); font-size: 12px; }
+.project-table .col-done { width: 64px; text-align: center !important; }
+.project-table .done-check { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: #dbeddb; color: #1c7a3c; font-size: 12px; font-weight: 700; }
+
+// Gantt: a compact options bar, a quiet timeline header, today in red, soft rounded bars with dark labels
+.project-gantt > .card:first-of-type, .project-gantt .gantt-options { background: transparent !important; border: 0 !important; box-shadow: none !important; padding: 0 0 12px !important; }
+.project-gantt .gantt-options { display: flex !important; align-items: center; gap: 16px; flex-wrap: wrap; }
+.project-gantt .gantt-options .field { margin: 0 !important; display: flex; align-items: center; gap: 8px; }
+.project-gantt .gantt-options .label { margin: 0 !important; font-size: 12px !important; font-weight: 500 !important; color: var(--text-light) !important; text-transform: uppercase; letter-spacing: .06em; }
+.project-gantt .gantt-options .input { height: 32px; border: 1px solid var(--fx-line) !important; border-radius: var(--fx-r) !important; font-size: 13px !important; background: #fff; }
+.project-gantt .gantt-chart-container { background: #fff !important; border: 1px solid var(--fx-line) !important; border-radius: var(--fx-r) !important; box-shadow: none !important; overflow: hidden; }
+.project-gantt .timeunit-month { height: 32px !important; font-size: 12px !important; font-weight: 600 !important; color: var(--text-strong) !important; background: var(--fx-grey) !important; border-bottom: 1px solid var(--fx-line); display: flex; align-items: center; }
+.project-gantt .gantt-timeline-days .timeunit { height: 40px !important; font-size: 11px !important; color: var(--text-light) !important; border-bottom: 1px solid var(--fx-line); }
+.project-gantt .gantt-timeline-days .timeunit .weekday { font-size: 10px; text-transform: uppercase; letter-spacing: .04em; }
+.project-gantt .today { background: transparent !important; color: #e5484d !important; font-weight: 700 !important; border-radius: 0 !important; box-shadow: inset 0 -2px 0 #e5484d; }
+.project-gantt .bg-row { background: #fff !important; }
+.project-gantt .bg-row-alt { background: #fafafb !important; }
+.project-gantt rect.gantt-bar { fill: #dceafb !important; stroke: #8fb9ec; stroke-width: 1px; rx: 6px; ry: 6px; }
+.project-gantt .gantt-bar-text { fill: #17457a !important; font-size: 12px !important; font-weight: 500; }
+.project-gantt .add-new-task.button { height: 28px !important; font-size: 13px !important; }
+.project-gantt .card:has(.gantt-options) { background: transparent !important; border: 0 !important; box-shadow: none !important; }
+.project-gantt .card:has(.gantt-options) > .card-content { padding: 0 0 12px !important; }
+.project-gantt .gantt-timeline-days .timeunit .weekday { text-transform: none !important; letter-spacing: 0 !important; font-size: 10px !important; }
+// Gantt labels drawn beside a bar are dark text on the white row (not the in-bar colour)
+.project-gantt .gantt-bar-text.is-outside { fill: var(--text) !important; font-weight: 400; }
+// The dark green "Done" badge takes white text (Yomi 2026-11-18: "dark green with the black text isn't easy to read")
+.is-done, .is-done--small { color: #fff !important; }
+// Upcoming: the date-range button and both checkboxes on one row (Yomi 2026-11-18)
+.show-tasks-options { display: flex !important; flex-wrap: wrap; align-items: center; gap: 16px; margin: 0 0 12px !important; }
+.show-tasks-options > * { margin: 0 !important; }
+.show-tasks-options .button { margin: 0 !important; }
+.show-tasks-options .fancy-checkbox, .show-tasks-options .base-checkbox { display: inline-flex !important; width: auto !important; }
+.fleet-page p.show-tasks-options { flex-direction: row !important; align-items: center !important; justify-content: flex-start !important; }

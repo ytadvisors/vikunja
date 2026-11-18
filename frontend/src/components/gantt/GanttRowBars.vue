@@ -160,13 +160,13 @@
 				</clipPath>
 			</defs>
 			<text
-				:x="getBarTextX(bar)"
+				:x="labelFits(bar) ? getBarTextX(bar) : getBarX(bar) + getBarWidth(bar) + 8"
 				:y="24"
-				:text-anchor="bar.meta?.dateType === 'endOnly' ? 'end' : 'start'"
-				class="gantt-bar-text"
-				:fill="getBarTextColor(bar)"
+				:text-anchor="labelFits(bar) && bar.meta?.dateType === 'endOnly' ? 'end' : 'start'"
+				:class="['gantt-bar-text', {'is-outside': !labelFits(bar)}]"
+				:fill="labelFits(bar) ? getBarTextColor(bar) : 'var(--text)'"
 				:text-decoration="bar.meta?.isDone ? 'line-through' : 'none'"
-				:clip-path="`url(#clip-${bar.id})`"
+				:clip-path="labelFits(bar) ? `url(#clip-${bar.id})` : undefined"
 				aria-hidden="true"
 			>
 				{{ bar.meta?.label || bar.id }}
@@ -264,6 +264,11 @@ function measureLabel(text: string): number {
 		}
 	}
 	return measureCtx ? measureCtx.measureText(text).width : text.length * 8
+}
+
+// Whether the bar's label fits inside the bar; otherwise it is drawn beside the bar
+function labelFits(bar: GanttBarModel): boolean {
+	return measureLabel(bar.meta?.label || bar.id) + LABEL_PADDING * 2 <= getBarWidth.value(bar)
 }
 
 // Tooltip only for bars too narrow to show their full label

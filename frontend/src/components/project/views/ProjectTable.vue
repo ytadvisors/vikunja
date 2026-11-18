@@ -112,17 +112,6 @@
 											@click="sort('index', $event)"
 										/>
 									</th>
-									<th
-										v-if="activeColumns.done"
-										:aria-sort="ariaSort('done')"
-									>
-										{{ $t('task.attributes.done') }}
-										<Sort
-											:order="sortBy.done"
-											:label="$t('task.attributes.done')"
-											@click="sort('done', $event)"
-										/>
-									</th>
 									<th v-if="activeColumns.project">
 										{{ $t('task.attributes.project') }}
 									</th>
@@ -237,6 +226,18 @@
 									<th v-if="activeColumns.createdBy">
 										{{ $t('task.attributes.createdBy') }}
 									</th>
+									<th
+										class="col-done"
+										v-if="activeColumns.done"
+										:aria-sort="ariaSort('done')"
+									>
+										{{ $t('task.attributes.done') }}
+										<Sort
+											:order="sortBy.done"
+											:label="$t('task.attributes.done')"
+											@click="sort('done', $event)"
+										/>
+									</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -248,12 +249,6 @@
 										<RouterLink :to="taskDetailRoutes[t.id]">
 											{{ getTaskIdentifier(t) }}
 										</RouterLink>
-									</td>
-									<td v-if="activeColumns.done">
-										<Done
-											:is-done="t.done"
-											variant="small"
-										/>
 									</td>
 									<td v-if="activeColumns.project">
 										<RouterLink
@@ -324,6 +319,17 @@
 											:show-username="false"
 											:user="t.created_by ?? {}"
 										/>
+									</td>
+									<td
+										v-if="activeColumns.done"
+										class="col-done"
+									>
+										<span
+											v-if="t.done"
+											class="done-check"
+											title="Done"
+											aria-label="Done"
+										>✓</span>
 									</td>
 								</tr>
 							</tbody>
