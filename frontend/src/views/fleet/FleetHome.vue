@@ -24,55 +24,96 @@
 			</form>
 			<p v-if="giveError" class="err">{{ giveError }}</p>
 			<nav class="quick">
-				<a href="#missions">▦ Missions</a>
 				<a href="#computers">▣ Computers</a>
 				<a href="#recommendations">◉ Recommendations</a>
 				<RouterLink :to="{name: 'home'}">☰ Tasks</RouterLink>
 			</nav>
 		</section>
 
-		<section class="kpis">
-			<div class="kpi"><span class="k-icon" style="--c:#0f7b6c">▣</span><div><b>{{ totals.connected ?? '–' }} of {{ totals.computers ?? '–' }}</b><small>computers connected · {{ totals.memory_gb ?? 0 }} GB</small></div></div>
-			<div class="kpi"><span class="k-icon" style="--c:#e03e3e">◉</span><div><b :class="{bad: highRecs}">{{ totals.recommendations ?? '–' }}</b><small>recommendations · {{ highRecs }} high</small></div></div>
-			<div class="kpi"><span class="k-icon" style="--c:#2383e2">▦</span><div><b>{{ missions.length }}</b><small>missions · {{ runningCount }} in progress</small></div></div>
-			<div class="kpi"><span class="k-icon" style="--c:#e16b16">⚡</span><div><b>{{ totals.jobs ?? '–' }}</b><small>jobs on local models · {{ totals.local_seconds ?? 0 }} s</small></div></div>
+		<section class="lists">
+			<div class="list">
+				<h3><RouterLink to="#computers">Computers</RouterLink><span class="badge">{{ view?.computers.length ?? 0 }}</span></h3>
+				<div v-if="view && !view.computers.length" class="empty">No computer has joined yet.</div>
+				<a v-for="c in view?.computers || []" :key="c.name" class="li" href="#computers" :title="`${c.chip} · ${c.memory_gb} GB · ${c.model}`">
+					<span class="li-icon" :class="c.state === 'connected' ? 'on' : 'off'">▣</span>
+					<span class="li-name">{{ c.name }}</span>
+					<span class="li-meta">{{ c.model || '' }}</span>
+					<span class="chev">›</span>
+				</a>
+			</div>
+			<div class="list">
+				<h3>Missions<span class="badge">{{ missions.length }}</span></h3>
+				<div v-if="!loading && !missions.length" class="empty ghost">Describe an outcome above</div>
+				<RouterLink v-for="m in missions.slice(0, 5)" :key="m.id" class="li" :to="{name: 'fleet.mission', params: {id: m.id}}">
+					<span :class="['li-icon', m.state.cls]">▦</span>
+					<span class="li-name">{{ m.title }}</span>
+					<span class="chev">›</span>
+				</RouterLink>
+			</div>
+			<div class="list">
+				<h3>Recent activity</h3>
+				<div v-for="(l, i) in (view?.log || []).slice(0, 5)" :key="i" class="li static">
+					<span class="li-icon hist">↺</span>
+					<span class="li-name"><span class="muted">{{ l.who || 'hub' }} /</span> {{ l.what }}</span>
+					<span class="li-meta">{{ ago(l.ts) }}</span>
+				</div>
+			</div>
 		</section>
 
-		<section id="missions" class="block">
-			<h2><span class="h-icon" style="--c:#2383e2">▦</span>Missions</h2>
-			<div v-if="loading" class="empty">Loading…</div>
-			<div v-else-if="!missions.length" class="empty">No missions yet. Describe an outcome above.</div>
-			<table v-else class="ntable">
-				<thead><tr><th>Mission</th><th>Status</th><th>Progress</th><th>Created</th></tr></thead>
+		<section v-if="view?.recommendations.length" id="recommendations" class="recs">
+			<h2>Recommendations <span class="badge">{{ view.recommendations.length }}</span></h2>
+			<div v-for="(r, i) in view.recommendations" :key="i" class="rec">
+				<span :class="['pill', r.level === 'act soon' ? 'bad' : 'warn']"><i />{{ r.level === 'act soon' ? 'High' : 'Medium' }}</span>
+				<b>{{ r.title }}</b>
+				<span class="muted">{{ r.computer }} · {{ r.why }}</span>
+			</div>
+		</section>
+
+		<section class="analytics">
+			<div class="a-head">
+				<h2>Activity</h2>
+				<div class="range" role="group" aria-label="Time range">
+					<button type="button" :class="{on: range === '24h'}" @click="range = '24h'">Last 24 hours</button>
+					<button type="button" :class="{on: range === '7d'}" @click="range = '7d'">Last 7 days</button>
+				</div>
+			</div>
+			<div class="cards big">
+				<div v-for="m in bigMetrics" :key="m.key" class="card">
+					<div class="c-title">{{ m.label }}</div>
+					<div class="c-num">{{ fmt(m.total) }}<span v-if="m.change !== null" :class="['chg', m.change >= 0 ? 'up' : 'down']">{{ m.change >= 0 ? '↗' : '↘' }} {{ Math.abs(m.change) }}%</span></div>
+					<svg class="chart" viewBox="0 0 300 90" preserveAspectRatio="none" aria-hidden="true">
+						<path :d="area(m.values, 300, 90)" class="fill" />
+						<path :d="line(m.values, 300, 90)" class="stroke" />
+					</svg>
+					<div class="axis"><span>{{ labels[0] }}</span><span>{{ labels[labels.length - 1] }}</span></div>
+				</div>
+			</div>
+			<div class="cards small">
+				<div v-for="m in smallMetrics" :key="m.key" class="card">
+					<div class="c-title">{{ m.label }}</div>
+					<div class="c-num">{{ fmt(m.total) }}</div>
+					<svg class="chart" viewBox="0 0 200 60" preserveAspectRatio="none" aria-hidden="true">
+						<path :d="area(m.values, 200, 60)" class="fill" />
+						<path :d="line(m.values, 200, 60)" class="stroke" />
+					</svg>
+					<div v-if="!m.total" class="nodata">No data</div>
+				</div>
+			</div>
+		</section>
+
+		<section id="computers" class="block">
+			<h2>Computers</h2>
+			<table class="ntable">
+				<thead><tr><th>Name</th><th>Status</th><th>Chip</th><th>Memory</th><th>Local model</th><th>Jobs</th><th>Last job</th></tr></thead>
 				<tbody>
-					<tr v-for="m in missions" :key="m.id" @click="router.push({name: 'fleet.mission', params: {id: m.id}})">
-						<td class="name"><span class="doc">▤</span>{{ m.title }}</td>
-						<td><span :class="['pill', m.state.cls]"><i />{{ m.state.label }}</span></td>
-						<td><div class="bar"><i :style="{width: m.pct + '%'}" /></div><small>{{ m.doneJobs }} of {{ m.jobs }} jobs</small></td>
-						<td class="muted">{{ ago(m.created) }}</td>
+					<tr v-for="c in view?.computers || []" :key="c.name">
+						<td class="name">{{ c.name }}</td>
+						<td><span :class="['pill', c.state === 'connected' ? 'ok' : 'warn']"><i />{{ c.state }}</span></td>
+						<td>{{ c.chip || '?' }}</td><td>{{ c.memory_gb ?? '?' }} GB</td><td>{{ c.model || '–' }}</td><td>{{ c.jobs }}</td><td class="muted">{{ ago(c.last_job) }}</td>
 					</tr>
 				</tbody>
 			</table>
 		</section>
-
-		<div class="cols">
-			<section id="computers" class="block">
-				<h2><span class="h-icon" style="--c:#0f7b6c">▣</span>Computers</h2>
-				<div v-if="view && !view.computers.length" class="empty">Install the station on a computer on this network and approve its pairing code.</div>
-				<div v-for="c in view?.computers || []" :key="c.name" class="row">
-					<div><b>{{ c.name }}</b><small>{{ c.chip || '?' }} · {{ c.memory_gb ?? '?' }} GB · {{ c.model || 'no local model' }}</small></div>
-					<div class="right"><span :class="['pill', c.state === 'connected' ? 'ok' : 'warn']"><i />{{ c.state }}</span><small>{{ c.jobs }} jobs · last {{ ago(c.last_job) }}</small></div>
-				</div>
-			</section>
-			<section id="recommendations" class="block">
-				<h2><span class="h-icon" style="--c:#e03e3e">◉</span>Recommendations</h2>
-				<div v-if="view && !view.recommendations.length" class="empty">Nothing to recommend.</div>
-				<div v-for="(r, i) in view?.recommendations || []" :key="i" class="row">
-					<div><b>{{ r.title }}</b><small>{{ r.computer }} · {{ r.why }}</small></div>
-					<div class="right"><span :class="['pill', r.level === 'act soon' ? 'bad' : 'warn']"><i />{{ r.level === 'act soon' ? 'High' : 'Medium' }}</span></div>
-				</div>
-			</section>
-		</div>
 	</div>
 </template>
 
@@ -95,6 +136,25 @@ const showMaterial = ref(false)
 const suggestions = ['Make sure all security patches are installed', 'Report disk, memory and uptime on every computer', 'Summarize the material I paste']
 
 const totals = computed(() => view.value?.totals || {})
+const range = ref<'24h' | '7d'>('24h')
+const series = computed(() => (view.value as any)?.activity?.[range.value] || {labels: [], buckets: [], previous: {}})
+const labels = computed<string[]>(() => series.value.labels)
+function metric(key: string, label: string) {
+	const values = series.value.buckets.map((b: any) => b[key] || 0)
+	const total = values.reduce((a: number, b: number) => a + b, 0)
+	const prev = series.value.previous?.[key] || 0
+	return {key, label, values, total: Math.round(total * 10) / 10, change: prev ? Math.round(100 * (total - prev) / prev) : null}
+}
+const bigMetrics = computed(() => [metric('jobs', 'Jobs done on local models'), metric('seconds', 'Local compute (seconds)')])
+const smallMetrics = computed(() => [metric('tokens', 'Local tokens'), metric('checks', 'Checks run'), metric('missions', 'Missions started'), metric('errors', 'Errors')])
+const fmt = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 1 : 2)}k` : String(n))
+function pts(v: number[], w: number, h: number) {
+	const max = Math.max(1, ...v)
+	const step = v.length > 1 ? w / (v.length - 1) : w
+	return v.map((x, i) => [i * step, h - 4 - (x / max) * (h - 10)])
+}
+const line = (v: number[], w: number, h: number) => (v.length ? 'M' + pts(v, w, h).map(p => p.map(n => n.toFixed(1)).join(',')).join(' L') : '')
+const area = (v: number[], w: number, h: number) => (v.length ? `${line(v, w, h)} L${w},${h} L0,${h} Z` : '')
 const highRecs = computed(() => (view.value?.recommendations || []).filter(r => r.level === 'act soon').length)
 const runningCount = computed(() => missions.value.filter(m => m.state.cls === 'info').length)
 
@@ -216,4 +276,47 @@ onUnmounted(() => stop())
 .row b { color: var(--text-strong); font-weight: 600; }
 .right { text-align: right; flex: none; }
 .empty { color: var(--text-light); padding: .8rem .3rem; }
+
+// Cloudflare direction (Yomi 2026-11-18: "the dashboard for cloudflare ... with the computers like the domains" and "charts here too")
+.lists { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem; margin: 2.2rem 0 1.8rem; text-align: left; }
+@media (max-width: 900px) { .lists { grid-template-columns: 1fr; } }
+.list h3 { display: flex; align-items: center; gap: .4rem; font-size: .85rem; font-weight: 600; color: var(--text-light); margin: 0 0 .3rem; padding-bottom: .4rem; border-bottom: 1px solid var(--border); }
+.list h3 a { color: var(--text-light); }
+.badge { font-size: .72rem; font-weight: 600; background: var(--fleet-quiet); color: var(--text-light); border-radius: 999px; padding: 0 .45rem; }
+.li { display: flex; align-items: center; gap: .55rem; padding: .62rem .1rem; border-bottom: 1px solid var(--border-light); color: var(--text-strong); font-size: .9rem; }
+.li:hover:not(.static) { background: var(--fleet-quiet); }
+.li-icon { width: 20px; text-align: center; color: var(--text-light); font-size: .85rem; }
+.li-icon.on, .li-icon.ok { color: #0f7b6c; }
+.li-icon.off { color: #9b9a97; }
+.li-icon.info { color: #2383e2; }
+.li-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.li-meta { color: var(--text-light); font-size: .78rem; white-space: nowrap; }
+.chev { color: var(--text-light); }
+.ghost { background: var(--fleet-sidebar, #f7f6f3); border-radius: 8px; text-align: center; margin-top: .5rem; }
+.recs { margin-bottom: 1.8rem; }
+.recs h2, .analytics h2, .block h2 { font-size: 1.1rem; font-weight: 700; color: var(--text-strong); margin: 0 0 .6rem; display: flex; align-items: center; gap: .5rem; }
+.rec { display: flex; align-items: baseline; gap: .7rem; padding: .55rem .1rem; border-bottom: 1px solid var(--border-light); flex-wrap: wrap; }
+.rec b { color: var(--text-strong); font-weight: 600; }
+.analytics { margin-bottom: 2rem; }
+.a-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: .7rem; }
+.range { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.range button { border: 0; background: var(--white); color: var(--text-light); padding: .35rem .75rem; font: inherit; font-size: .82rem; cursor: pointer; }
+.range button.on { background: var(--fleet-quiet); color: var(--text-strong); font-weight: 600; }
+.cards { display: grid; gap: .6rem; margin-bottom: .6rem; }
+.cards.big { grid-template-columns: 1fr 1fr; }
+.cards.small { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 900px) { .cards.big, .cards.small { grid-template-columns: 1fr 1fr; } }
+.card { position: relative; border: 1px solid var(--border); border-radius: 10px; padding: .75rem .85rem .5rem; background: var(--white); }
+.c-title { font-size: .8rem; color: var(--text-light); }
+.c-num { font-size: 1.5rem; font-weight: 700; color: var(--text-strong); display: flex; align-items: baseline; gap: .5rem; margin: .1rem 0 .3rem; }
+.small .c-num { font-size: 1.2rem; }
+.chg { font-size: .78rem; font-weight: 600; }
+.chg.up { color: #0f7b6c; }
+.chg.down { color: #e03e3e; }
+.chart { width: 100%; height: 90px; display: block; }
+.small .chart { height: 56px; }
+.chart .stroke { fill: none; stroke: #2383e2; stroke-width: 1.6; vector-effect: non-scaling-stroke; }
+.chart .fill { fill: rgba(35, 131, 226, .10); stroke: none; }
+.axis { display: flex; justify-content: space-between; font-size: .72rem; color: var(--text-light); }
+.nodata { position: absolute; inset: auto 0 1.4rem 0; text-align: center; font-size: .78rem; color: var(--text-light); }
 </style>
