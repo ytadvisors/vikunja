@@ -10,6 +10,12 @@
 			Availability
 		</RouterLink>
 		<RouterLink
+			:to="{name: 'fleet.live', query: {tab: 'monitors'}}"
+			:class="{on: current === 'monitors'}"
+		>
+			Monitors
+		</RouterLink>
+		<RouterLink
 			:to="{name: 'fleet.live', query: {tab: 'issues'}}"
 			:class="{on: current === 'issues'}"
 		>
@@ -31,5 +37,5 @@ import {computed} from 'vue'
 import {useRoute} from 'vue-router'
 
 const route = useRoute()
-const current = computed(() => (['events', 'issues'].includes(String(route.query.tab)) ? String(route.query.tab) : 'availability'))
+const current = computed(() => (['events', 'issues', 'monitors'].includes(String(route.query.tab)) ? String(route.query.tab) : 'availability'))
 </script>

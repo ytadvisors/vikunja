@@ -1,6 +1,6 @@
 <template>
 	<div class="fleet-page">
-		<p class="crumb">Monitoring / {{ view2 === 'events' ? 'Events' : view2 === 'issues' ? 'Issues' : 'Availability' }}</p>
+		<p class="crumb">Monitoring / {{ {events: 'Events', issues: 'Issues', monitors: 'Monitors'}[view2] || 'Availability' }}</p>
 		<header class="page-head">
 			<div>
 				<h1><span class="h-icon" style="--c:#2383e2">◉</span>Monitoring</h1>
@@ -54,6 +54,23 @@
 			</div>
 			<div v-if="current.risks.length" class="risks"><b>Worth checking</b><div v-for="(r, i) in current.risks" :key="i" class="risk">{{ r }}</div></div>
 		</section>
+		</template>
+		<template v-else-if="view2 === 'monitors'">
+			<section class="card monitors-list">
+				<table class="ntable">
+					<thead><tr><th>Monitor</th><th>Status</th><th>Check-ins</th><th>Last run</th><th>Last 24 h</th></tr></thead>
+					<tbody>
+						<tr v-for="m in monitorList" :key="m.id">
+							<td><b class="iss-what">{{ m.name }}</b><small class="muted">#{{ m.id }} · {{ m.every }}</small></td>
+							<td><span :class="['pill', STATE_PILL[m.state] || '']"><i />{{ m.state }}</span></td>
+							<td class="mon-strip"><StatusStrip :slots="m.slots" compact :title-for="monTitle(m)" /><small class="muted">last {{ m.window_h >= 48 ? Math.round(m.window_h / 24) + ' days' : m.window_h + ' h' }}</small></td>
+							<td class="muted" :title="m.last_detail">{{ ago(m.last_ts) }}<small class="muted mon-detail">{{ m.last_detail }}</small></td>
+							<td>{{ m.ok_24h }} / {{ m.runs_24h }} ok</td>
+						</tr>
+					</tbody>
+				</table>
+				<div v-if="!monitorList.length" class="empty"><b>No monitors yet</b>Scheduled jobs appear here as soon as they report a run.</div>
+			</section>
 		</template>
 		<template v-else-if="view2 === 'issues'">
 			<section class="card issues">
@@ -140,7 +157,16 @@ const errTotal = computed(() => buckets.value.reduce((a, b) => a + b.errors, 0))
 const dev = ref('')
 // Two views of the same data: availability over time, or the event log (Yomi 2026-11-18: no scrolling to reach events)
 const route = useRoute()
-const view2 = computed<'availability' | 'events' | 'issues'>(() => (['events', 'issues'].includes(String(route.query.tab)) ? route.query.tab as any : 'availability'))
+const view2 = computed<'availability' | 'events' | 'issues' | 'monitors'>(() => (['events', 'issues', 'monitors'].includes(String(route.query.tab)) ? route.query.tab as any : 'availability'))
+// Monitors (after Sentry's cron monitors): each scheduled job's check-ins as a timeline, from the actuator's schedule runs
+const monitorList = computed<any[]>(() => (view.value as any)?.monitors?.monitors || [])
+const STATE_PILL: Record<string, string> = {ok: 'ok', overdue: 'warn', failing: 'bad'}
+const monTitle = (m: any) => (i: number, s: string) => {
+	const slotMs = (m.window_h * 3600000) / m.slots.length
+	const at = new Date(Date.now() - (m.slots.length - 1 - i) * slotMs)
+	const word = s === '1' ? 'ran ok' : s === '0' ? 'missed' : s === 'e' ? 'failed' : s === 't' ? 'skipped' : 'no data'
+	return `${at.toISOString().slice(5, 16).replace('T', ' ')} UTC: ${word}`
+}
 // Issues (after Sentry): the same event on the same source folded into one row, with counts, first and last seen and a
 // 24-hour trend, so a recurring problem shows once instead of as many log lines.
 const issues = computed(() => {
@@ -312,4 +338,8 @@ onUnmounted(() => stop())
 .trend-cell { width: 160px; }
 .trend { width: 140px; height: 20px; display: block; }
 .trend path { fill: none; stroke: #6c5fc7; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.monitors-list td { vertical-align: middle; }
+.mon-strip { min-width: 280px; width: 40%; }
+.mon-strip small { display: block; margin-top: 4px; font-size: 11px; }
+.mon-detail { display: block; font-size: 11px; max-width: 260px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 </style>
