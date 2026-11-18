@@ -3,11 +3,46 @@
 		<p class="crumb"><RouterLink :to="{name: 'fleet.home'}">Fleet</RouterLink> / Live monitoring</p>
 		<header class="head">
 			<h1><span class="h-icon" style="--c:#e03e3e">◉</span>Live monitoring</h1>
-			<p class="sub">Everything the hub records, as it happens: devices connecting, jobs, checks, missions and errors. Each event links to its task.</p>
+			<p class="sub">Watch the whole system, or pick one device. Everything the hub records appears as it happens, and each event links to its task.</p>
 		</header>
 
+		<div class="picker">
+			<select v-model="dev" aria-label="What to monitor">
+				<option value="">Whole system</option>
+				<optgroup label="Fleet computers"><option v-for="c in fleetComputers" :key="c.name" :value="'fleet:' + c.name">{{ c.name }} ({{ c.state }})</option></optgroup>
+				<optgroup label="Network devices"><option v-for="d in netDevices" :key="d.ip" :value="'net:' + d.ip">{{ d.label }} · {{ d.ip }}</option></optgroup>
+			</select>
+		</div>
+
+		<section v-if="!dev" class="tiles">
+			<div class="tile"><span>Hub computer</span><b>{{ sys?.name || 'hub' }}</b><small>up {{ sys?.up_since ? ago(sys.up_since).replace(' ago', '') : '?' }}</small></div>
+			<div class="tile"><span>Processor load</span><b>{{ cpuPct }}%</b><small>{{ sys?.load?.[0] }} on {{ sys?.cpus }} threads (1 min)</small><i class="meter"><em :style="{width: cpuPct + '%', background: pctColor(cpuPct)}" /></i></div>
+			<div class="tile"><span>Memory</span><b>{{ sys?.memory?.used_gb }} / {{ sys?.memory?.total_gb }} GB</b><small>{{ memPct }}% in use</small><i class="meter"><em :style="{width: memPct + '%', background: pctColor(memPct)}" /></i></div>
+			<div class="tile"><span>Disk free</span><b>{{ sys?.disk?.free_gb }} GB</b><small>of {{ sys?.disk?.total_gb }} GB</small><i class="meter"><em :style="{width: diskPct + '%', background: pctColor(diskPct)}" /></i></div>
+			<div class="tile"><span>Fleet computers</span><b>{{ connected }} / {{ fleetComputers.length }}</b><small>connected</small></div>
+			<div class="tile"><span>Network devices</span><b>{{ net?.online ?? '?' }} / {{ net?.devices?.length ?? '?' }}</b><small>online · {{ net?.with_risks ?? 0 }} to check</small></div>
+			<div class="tile"><span>Errors</span><b :class="{red: errTotal}">{{ errTotal }}</b><small>{{ range === '24h' ? 'last 24 hours' : 'last 7 days' }}</small></div>
+		</section>
+
+		<section v-else-if="current" class="devcard">
+			<header>
+				<div><h2>{{ current.title }}</h2><small class="muted">{{ current.kind }} · {{ current.address || 'no address' }}</small></div>
+				<span :class="['pill', current.up ? 'ok' : 'bad']"><i />{{ current.status }}</span>
+				<RouterLink class="ghost" :to="{name: 'fleet.devices'}">Device details</RouterLink>
+			</header>
+			<dl>
+				<div v-for="f in current.facts" :key="f[0]"><dt>{{ f[0] }}</dt><dd>{{ f[1] }}</dd></div>
+			</dl>
+			<div class="avail">
+				<div class="c-head"><b>Availability, last 24 hours</b><span class="muted">{{ availPct }}</span></div>
+				<div class="strip"><i v-for="(s, i) in strip" :key="i" :class="s === '1' ? 'up' : s === '0' ? 'down' : 'none'" :title="slotTitle(i, s)" /></div>
+				<div class="axis"><span>24 h ago</span><span>12 h ago</span><span>now</span></div>
+			</div>
+			<div v-if="current.risks.length" class="risks"><b>Worth checking</b><div v-for="(r, i) in current.risks" :key="i" class="risk">{{ r }}</div></div>
+		</section>
+
 		<div class="bar">
-			<select v-model="source" aria-label="Source"><option value="">All events</option><option value="ok">Success</option><option value="error">Errors</option><option value="warn">Warnings</option></select>
+			<select v-model="source" aria-label="Source"><option value="">All levels</option><option value="ok">Success</option><option value="error">Errors</option><option value="warn">Warnings</option></select>
 			<input v-model="q" type="search" placeholder="Filter by device, event or task number" aria-label="Filter events">
 			<button type="button" :class="['live', {on: live}]" @click="toggleLive"><i />{{ live ? 'Live' : 'Paused' }}</button>
 			<select v-model="range" aria-label="Time range"><option value="24h">Last 24 hours</option><option value="7d">Last 7 days</option></select>
@@ -45,7 +80,7 @@
 
 <script setup lang="ts">
 import {computed, onMounted, onUnmounted, ref} from 'vue'
-import {fleetView, onFleetChange, type FleetView} from '@/fleet/api'
+import {ago, fleetView, onFleetChange, type FleetView} from '@/fleet/api'
 
 const view = ref<(FleetView & {activity?: any}) | null>(null)
 const q = ref('')
@@ -61,7 +96,51 @@ const max = computed(() => Math.max(1, ...buckets.value.map(b => b.jobs + b.miss
 const h = (n: number) => (n / max.value) * 92
 const okTotal = computed(() => buckets.value.reduce((a, b) => a + b.jobs + b.missions, 0))
 const errTotal = computed(() => buckets.value.reduce((a, b) => a + b.errors, 0))
-const rows = computed(() => (view.value?.log || []).filter((l: any) => (!source.value || l.level === source.value) &&
+const dev = ref('')
+const sys = computed<any>(() => (view.value as any)?.system || null)
+const net = computed<any>(() => (view.value as any)?.network || null)
+const fleetComputers = computed(() => (view.value?.computers || []).filter(c => c.state !== 'waiting for approval'))
+const fleetIps = computed(() => new Set(fleetComputers.value.map(c => c.address)))
+const netDevices = computed<any[]>(() => (net.value?.devices || []).filter((d: any) => !fleetIps.value.has(d.ip)))
+const connected = computed(() => fleetComputers.value.filter(c => c.state === 'connected').length)
+const pct = (a?: number, b?: number) => (a != null && b ? Math.min(100, Math.round((a / b) * 100)) : 0)
+const cpuPct = computed(() => pct(sys.value?.load?.[0], sys.value?.cpus))
+const memPct = computed(() => pct(sys.value?.memory?.used_gb, sys.value?.memory?.total_gb))
+const diskPct = computed(() => 100 - pct(sys.value?.disk?.free_gb, sys.value?.disk?.total_gb))
+const pctColor = (p: number) => (p >= 90 ? '#e03e3e' : p >= 70 ? '#d9730d' : '#448361')
+const current = computed<any>(() => {
+	if (dev.value.startsWith('fleet:')) {
+		const c = fleetComputers.value.find(x => x.name === dev.value.slice(6))
+		if (!c) {
+			return null
+		}
+		const n = (net.value?.devices || []).find((d: any) => d.ip === c.address)
+		return {title: c.name, kind: 'Fleet computer, paired with the hub', address: c.address, up: c.state === 'connected', status: c.state, names: [c.name, c.member], ip: c.address,
+			risks: n?.risks || [], facts: [['Hardware', `${c.chip || '?'} · ${c.memory_gb ?? '?'} GB`], ['Model', c.model || 'none'], ['Work done', `${c.jobs} jobs · ${c.seconds} s · ${c.tokens} tokens`],
+				['Last job', c.last_job ? ago(c.last_job) : 'none'], ['Paired', c.since ? ago(c.since) : '?'], ['Checks run', String(c.checked ?? 0)]]}
+	}
+	if (dev.value.startsWith('net:')) {
+		const d = netDevices.value.find((x: any) => x.ip === dev.value.slice(4))
+		if (!d) {
+			return null
+		}
+		return {title: d.label, kind: `Network device, watched read only · ${d.type}`, address: d.ip, up: d.online, status: d.online ? 'online' : 'offline', names: [d.label], ip: d.ip, risks: d.risks,
+			facts: [['Maker', d.maker || 'unknown'], ['Open services', d.ports.length ? d.ports.join(', ') : 'none'], ['Firmware', d.firmware || 'not reported'], ['First seen', ago(d.first_seen)], ['Last seen', d.online ? 'now' : ago(d.last_seen)], ['Hardware address', d.mac || 'not visible']]}
+	}
+	return null
+})
+const strip = computed<string[]>(() => {
+	const p = (view.value as any)?.presence || {}
+	const row = current.value?.ip ? p[current.value.ip] : null
+	return (row || (p._scanned || '.'.repeat(144)).replace(/s/g, '0')).split('')
+})
+const availPct = computed(() => {
+	const seen = strip.value.filter(s => s !== '.')
+	return seen.length ? `${Math.round((seen.filter(s => s === '1').length / seen.length) * 100)}% of ${seen.length} scans` : 'no scans recorded yet'
+})
+const slotTitle = (i: number, s: string) => `${new Date(Date.now() - (143 - i) * 600000).toISOString().slice(11, 16)} UTC: ${s === '1' ? 'up' : s === '0' ? 'not seen' : 'no scan'}`
+const matches = (l: any) => !current.value || current.value.names.includes(l.who) || (current.value.ip && `${l.detail} `.includes(current.value.ip + ' '))
+const rows = computed(() => (view.value?.log || []).filter((l: any) => matches(l) && (!source.value || l.level === source.value) &&
 	(!q.value || `${l.who} ${l.what} ${l.detail} ${l.task}`.toLowerCase().includes(q.value.toLowerCase()))))
 
 async function refresh() {
@@ -123,4 +202,33 @@ onUnmounted(() => stop())
 .lv.info { background: #d3e5ef; color: #183347; }
 .empty { text-align: center; color: var(--text-light); padding: 2.4rem 1rem; }
 .empty b { display: block; color: var(--text-strong); }
+.picker { margin-bottom: .9rem; }
+.picker select { border: 1px solid var(--border); border-radius: 8px; padding: .5rem .8rem; font: inherit; font-size: .95rem; font-weight: 500; background: var(--white); color: var(--text-strong); min-width: 320px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: .6rem; margin-bottom: 1rem; }
+.tile { border: 1px solid var(--border); border-radius: 10px; padding: .65rem .8rem; display: flex; flex-direction: column; gap: .1rem; }
+.tile span { font-size: .76rem; color: var(--text-light); }
+.tile b { font-size: 1.15rem; color: var(--text-strong); font-weight: 600; }
+.tile b.red { color: #e03e3e; }
+.tile small { font-size: .76rem; color: var(--text-light); }
+.meter { display: block; height: 4px; border-radius: 2px; background: #f1f1ef; margin-top: .35rem; overflow: hidden; }
+.meter em { display: block; height: 100%; }
+.devcard { border: 1px solid var(--border); border-radius: 12px; padding: .9rem 1rem; margin-bottom: 1rem; }
+.devcard header { display: flex; align-items: center; gap: .8rem; }
+.devcard header > div { margin-inline-end: auto; }
+.devcard h2 { margin: 0; font-size: 1.2rem; color: var(--text-strong); }
+.devcard .ghost { border: 1px solid var(--border); border-radius: 6px; padding: .25rem .6rem; font-size: .84rem; color: var(--text-strong); }
+.devcard dl { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: .5rem; margin: .8rem 0; }
+.devcard dt { font-size: .74rem; color: var(--text-light); }
+.devcard dd { margin: 0; font-size: .88rem; color: var(--text-strong); }
+.pill { display: inline-flex; align-items: center; gap: .3rem; font-size: .76rem; border-radius: 999px; padding: .1rem .55rem; }
+.pill i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.pill.ok { background: #dbeddb; color: #1c3829; }
+.pill.bad { background: #ffe2dd; color: #5d1715; }
+.strip { display: grid; grid-template-columns: repeat(144, 1fr); gap: 1px; height: 26px; }
+.strip i { border-radius: 1px; }
+.strip .up { background: #6fb38a; }
+.strip .down { background: #f0a49b; }
+.strip .none { background: #f1f1ef; }
+.risks { margin-top: .8rem; }
+.risk { margin-top: .3rem; padding: .45rem .7rem; border-radius: 8px; background: #fdecc8; color: #402c1b; font-size: .85rem; }
 </style>
