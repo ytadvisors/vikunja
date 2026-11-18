@@ -15,7 +15,7 @@ function clampWidth(width: number): number {
 const isResizing = ref(false)
 // Icon rail (Fleet HQ): the sidebar collapses to its icons; remembered per browser.
 const RAIL_KEY = 'fleet.sidebarRail'
-const RAIL_WIDTH = 56
+const RAIL_WIDTH = 74
 function readRail(): boolean {
 	try {
 		return localStorage.getItem(RAIL_KEY) === '1'

@@ -620,3 +620,74 @@ body { font-size: 15px; line-height: 1.5; }
 .menu-container .menu-list a:hover, .menu-container .menu-list a.router-link-active, .menu-container .rail-toggle.edge-toggle:hover { background: var(--fx-grey) !important; }
 :root.dark .menu-container, :root.dark .menu-container .menu, :root.dark .menu-container .rail-toggle.edge-toggle { background: #26262b !important; }
 :root.dark .menu-container .menu-list a:hover, :root.dark .menu-container .menu-list a.router-link-active { background: var(--fx-grey) !important; }
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// Two-level left navigation after Sentry (Yomi 2026-11-18): a 74 px rail of areas (icon over a 12 px label, 65x60 items, active
+// icon in a bordered rounded square) and a white secondary panel with the area's pages. Collapsing hides the panel only.
+// ---------------------------------------------------------------------------------------------------------------------------
+.menu-container.nav2 { padding: 0 !important; border-right: 0 !important; }
+.nav2 .rail { flex: 0 0 74px; width: 74px; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 12px 0; background: #fff; border-right: 1px solid var(--fx-line); overflow-y: auto; }
+.nav2 .rail-logo { display: grid; place-items: center; width: 40px; height: 40px; margin-bottom: 8px; }
+.nav2 .rail-logo svg { width: 32px; height: 32px; }
+.nav2 .rail-item { width: 65px; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 4px 4px 8px; color: #6a6772; text-decoration: none; border: 0; background: none; cursor: pointer; font: inherit; }
+.nav2 .rail-item .ri { width: 32px; height: 32px; display: grid; place-items: center; border-radius: var(--fx-r); border: 1px solid transparent; color: var(--c, #6a6772); font-size: 17px; }
+.nav2 .rail-item .rl { font-size: 12px; line-height: 1.15; text-align: center; }
+.nav2 .rail-item:hover .ri { background: var(--fx-grey); }
+.nav2 .rail-item.on { color: var(--text-strong); }
+.nav2 .rail-item.on .rl { font-weight: 500; }
+.nav2 .rail-item.on .ri { background: var(--fx-grey); border-color: var(--fx-line); }
+.nav2 .rail-spacer { flex: 1; }
+.nav2 .rail-expand .ri { font-size: 16px; color: var(--text-light); border-color: var(--fx-line); }
+.nav2 .panel2 { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; overflow-y: auto; background: #fff; border-right: 1px solid var(--fx-line); }
+.nav2 .p2-head { padding: 16px 16px 8px; font-size: 16px; font-weight: 600; color: var(--text-strong); }
+.nav2 .p2-list { margin: 0 !important; padding: 0 8px !important; }
+.nav2 .p2-list li a { display: block; padding: 6px 8px !important; border-radius: var(--fx-r); font-size: 14px !important; font-weight: 500; color: var(--text) !important; background: none !important; }
+.nav2 .p2-list li a:hover { background: var(--fx-grey) !important; }
+.nav2 .p2-list li a.router-link-exact-active, .nav2 .p2-list li a.router-link-active { background: var(--fx-grey) !important; color: var(--text-strong) !important; font-weight: 600; }
+.nav2 .p2-group { margin: 0; padding: 16px 16px 4px; font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--text-light); }
+.nav2 .p2-note { padding: 8px 16px; font-size: 12px; color: var(--text-light); }
+.nav2 .panel2 .menu { padding: 0 0 4px; }
+.nav2 .p2-foot { margin-top: auto; border-top: 1px solid var(--fx-line); display: flex; flex-direction: column; }
+.nav2 .p2-foot > a { padding: 8px 16px; font-size: 12px; }
+.nav2 .p2-collapse { height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 16px; background: #fff; border: 0; border-top: 1px solid var(--fx-line); color: var(--text); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; text-align: left; }
+.nav2 .p2-collapse:hover { background: var(--fx-grey); }
+:root.dark .nav2 .rail, :root.dark .nav2 .panel2, :root.dark .nav2 .p2-collapse { background: #26262b; }
+// Compact project tree in the secondary panel
+.nav2 .panel2 .menu { --menu-nested-list-margin: 12px; padding: 0 8px 4px !important; }
+.nav2 .panel2 .menu .menu-list li > div { height: 32px !important; border-radius: var(--fx-r); }
+.nav2 .panel2 .menu .menu-list li > div:hover { background: var(--fx-grey) !important; }
+.nav2 .panel2 .menu .menu-list .collapse-project-button { padding: 4px !important; }
+.nav2 .panel2 .menu .menu-list .collapse-project-button svg { width: 12px !important; }
+.nav2 .panel2 .menu .menu-list .collapse-project-button-placeholder { width: 20px !important; }
+.nav2 .panel2 .menu .menu-list li > div > a, .nav2 .panel2 .menu .menu-list .list-menu-link { padding: 6px 4px !important; font-size: 14px !important; font-weight: 400 !important; color: var(--text) !important; }
+.nav2 .panel2 .menu .menu-list a.router-link-exact-active { color: var(--text-strong) !important; font-weight: 600 !important; }
+.nav2 .panel2 .menu .color-bubble { margin: 0 6px 0 2px !important; height: 8px !important; flex-basis: 8px !important; }
+
+// No app header (Yomi 2026-11-18: "remove the Fleet HQ top header"). The rail reaches the top with the Android-head mark;
+// the old header loses its logo and menu button and becomes a slim toolbar beside the page (project title and settings,
+// search, notifications, account), on the page's grey. Phones keep the original header and menu button.
+@media screen and (min-width: 769px) {
+  .menu-container.nav2 { inset-block-start: 0 !important; z-index: 30; }
+  .navbar .logo-link, .navbar .menu-button { display: none !important; }
+  .navbar { padding-inline-start: calc(var(--sidebar-width, 300px) + 16px) !important; background: var(--fx-grey) !important; box-shadow: none !important; border-bottom: 1px solid var(--fx-line) !important; height: 48px !important; min-height: 48px !important; }
+  .navbar .project-title-wrapper { justify-content: flex-start !important; margin: 0 !important; }
+  .navbar .project-title, .navbar .project-title-wrapper .project-title { font-size: 16px !important; font-weight: 600 !important; }
+  .nav2 .rail-logo svg { width: 36px; height: 36px; }
+}
+.fleet-licence { margin-top: 12px; font-size: 13px; color: var(--text-light); line-height: 1.5; }
+@media screen and (min-width: 769px) {
+  .menu-container.nav2 { z-index: 40 !important; }
+  .navbar { z-index: 20 !important; }
+  .navbar .project-title-wrapper { flex: 0 1 auto !important; margin-inline-end: auto !important; justify-content: flex-start !important; text-align: left !important; }
+  body:has(.menu-container.nav2.is-rail) .navbar { padding-inline-start: 90px !important; }
+}
+// The toolbar belongs to the content area: it starts where the sidebar ends; controls right-aligned on every page
+@media screen and (min-width: 769px) {
+  .navbar { inset-inline-start: 300px !important; inset-inline-end: 0 !important; width: auto !important; padding-inline-start: 16px !important; padding-inline-end: 16px !important; }
+  body:has(.menu-container.nav2.is-rail) .navbar { inset-inline-start: 74px !important; padding-inline-start: 16px !important; }
+  .navbar .navbar-end { margin-inline-start: auto !important; }
+}
+// Live monitoring: the Whole system / device picker spans the full width (Yomi 2026-11-18)
+.fleet-page .picker { display: block; margin-bottom: 16px; }
+.fleet-page .picker select { width: 100% !important; min-width: 0 !important; height: 36px; border: 1px solid var(--fx-line) !important; border-radius: var(--fx-r) !important; background: #fff !important; padding: 0 12px !important; font-size: 14px !important; }
+.fleet-page .tiles { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important; }

@@ -21,6 +21,26 @@
 				<p v-if="proActive">
 					{{ $t('about.proActive') }}
 				</p>
+				<p class="fleet-licence">
+					Fleet HQ by YT Advisors is based on
+					<a
+						href="https://vikunja.io"
+						target="_blank"
+						rel="noopener"
+					>Vikunja</a>,
+					free software licensed under the
+					<a
+						href="https://www.gnu.org/licenses/agpl-3.0.html"
+						target="_blank"
+						rel="noopener"
+					>GNU Affero General Public License v3</a>.
+					The source code of the version you are using, including YT Advisors' changes, is available from YT Advisors on request; the original Vikunja source is at
+					<a
+						href="https://github.com/go-vikunja/vikunja"
+						target="_blank"
+						rel="noopener"
+					>github.com/go-vikunja/vikunja</a>.
+				</p>
 			</div>
 			<template #footer>
 				<XButton
