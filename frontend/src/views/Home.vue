@@ -1,8 +1,12 @@
 <template>
-	<div class="content has-text-centered">
-		<h1 v-if="salutation">
-			{{ salutation }}
-		</h1>
+	<div class="fleet-page fleet-mytasks">
+		<p class="crumb"><RouterLink :to="{name: 'fleet.home'}">Fleet</RouterLink> / My tasks</p>
+		<header class="page-head">
+			<div>
+				<h1><span class="h-icon" style="--c:#e03e3e">☑</span>My tasks</h1>
+				<p class="sub">{{ salutation ? salutation + '. ' : '' }}Everything assigned to you, across all projects.</p>
+			</div>
+		</header>
 
 		<Message
 			v-if="deletionScheduledAt !== null"
@@ -20,15 +24,15 @@
 			</RouterLink>
 		</Message>
 		<AddTask
-			class="is-max-width-desktop"
+			class="fleet-addtask"
 			@tasksAdded="updateTaskKey"
 		/>
 		<ImportHint v-if="tasksLoaded" />
 		<div
 			v-if="authStore.settings.frontend_settings.show_last_viewed !== false && projectHistory.length > 0"
-			class="is-max-width-desktop has-text-start mbs-4"
+			class="mbs-4"
 		>
-			<h2>{{ $t('home.lastViewed') }}</h2>
+			<h2 class="sec">{{ $t('home.lastViewed') }}</h2>
 			<ProjectCardGrid
 				v-cy="'projectCardGrid'"
 				:projects="projectHistory"

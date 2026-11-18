@@ -1,24 +1,27 @@
 <template>
 	<div
 		:class="{ 'is-loading': showLoading}"
-		class="loader-container"
+		class="fleet-page loader-container"
 	>
-		<XButton
-			:to="{name:'labels.create'}"
-			class="is-pulled-end"
-			icon="plus"
-		>
-			{{ $t('label.create.header') }}
-		</XButton>
-
+		<p class="crumb"><RouterLink :to="{name: 'fleet.home'}">Fleet</RouterLink> / Labels</p>
+		<header class="page-head">
+			<div>
+				<h1><span class="h-icon" style="--c:#d9730d">◆</span>Labels</h1>
+				<p class="sub">{{ labels.length > 0 ? $t('label.description') : '' }}</p>
+			</div>
+			<div class="actions">
+				<XButton
+					:to="{name:'labels.create'}"
+					icon="plus"
+				>
+					{{ $t('label.create.header') }}
+				</XButton>
+			</div>
+		</header>
 		<div class="content">
-			<h1>{{ $t('label.manage') }}</h1>
-			<p v-if="labels.length > 0">
-				{{ $t('label.description') }}
-			</p>
 			<p
-				v-else
-				class="has-text-centered has-text-grey is-italic"
+				v-if="labels.length === 0"
+				class="empty"
 			>
 				{{ $t('label.newCTA') }}
 				<RouterLink :to="{name:'labels.create'}">

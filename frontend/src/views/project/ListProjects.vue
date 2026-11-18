@@ -1,10 +1,17 @@
 <template>
 	<div
 		v-cy="'projects-list'"
-		class="content loader-container"
+		class="fleet-page loader-container"
 		:class="{'is-loading': loading}"
 	>
-		<header class="project-header">
+		<p class="crumb"><RouterLink :to="{name: 'fleet.home'}">Fleet</RouterLink> / Projects</p>
+		<header class="page-head">
+			<div>
+				<h1><span class="h-icon" style="--c:#2383e2">▤</span>Projects</h1>
+				<p class="sub">Where work is organised. Open one to see it as a list, table, timeline or board.</p>
+			</div>
+		</header>
+		<div class="toolbar project-header">
 			<FancyCheckbox
 				v-model="showArchived"
 				v-cy="'show-archived-check'"
@@ -27,7 +34,7 @@
 					{{ $t('project.create.header') }}
 				</XButton>
 			</div>
-		</header>
+		</div>
 
 		<ProjectCardGrid
 			:projects="projects"
@@ -52,7 +59,7 @@ import {useDelayedLoading} from '@/composables/useDelayedLoading'
 const {t} = useI18n()
 const projectList = useProjects()
 
-useTitle(() => t('project.title'))
+useTitle(() => t('project.projects'))
 const showArchived = useStorage('showArchived', false)
 
 const loading = useDelayedLoading(() => projectList.isLoading)

@@ -78,9 +78,13 @@
 import {computed, onMounted, onUnmounted, ref} from 'vue'
 import {ago, onFleetChange, vkGet, vkPost} from '@/fleet/api'
 import {findBriefing, findDebrief, findJobResult, findStopped, type Briefing, type Debrief, type JobResult} from '@/fleet/parse'
+import {useTitle} from '@/composables/useTitle'
+
+
 
 const props = defineProps<{id: number | string}>()
 const id = computed(() => Number(props.id))
+useTitle(() => `Mission #${id.value ?? ''}`)
 const task = ref<any>(null)
 const briefing = ref<Briefing | null>(null)
 const debrief = ref<Debrief | null>(null)

@@ -151,6 +151,10 @@
 <script setup lang="ts">
 import {computed, onMounted, onUnmounted, reactive, ref} from 'vue'
 import {CONSOLE_URL, ago, escapeHtml, fleetView, onFleetChange, stationProjects, vkPost, vkPut, type FleetView} from '@/fleet/api'
+import {useTitle} from '@/composables/useTitle'
+
+useTitle('Devices')
+
 
 const view = ref<(FleetView & {checks_catalog?: any[]}) | null>(null)
 const tab = ref<'devices' | 'profiles' | 'enroll'>('devices')

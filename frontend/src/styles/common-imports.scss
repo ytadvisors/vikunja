@@ -18,7 +18,7 @@ $family-sans-serif: 'Open Sans', Helvetica, Arial, sans-serif;
 // mobile minimum width
 $mobile: 320px;
 
-$vikunja-font: 'Quicksand', sans-serif;
+$vikunja-font: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;  // Fleet HQ: one sans for headings and text
 
 $pagination-current-border: var(--primary);
 $navbar-item-active-color: var(--primary);

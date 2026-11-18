@@ -39,13 +39,13 @@ const CustomLogo = computed(() => {
 	<div>
 		<Logo
 			v-if="!CustomLogo"
-			alt="Vikunja"
+			alt="Fleet HQ"
 			class="logo"
 		/>
 		<img
 			v-else
 			:src="CustomLogo"
-			alt="Vikunja"
+			alt="Fleet HQ"
 			class="logo"
 		>
 	</div>

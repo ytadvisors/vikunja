@@ -441,6 +441,10 @@ const router = createRouter({
 		},
 		{
 			path: '/fleet/overview',
+			redirect: {name: 'fleet.overview'},
+		},
+		{
+			path: '/my-tasks',
 			name: 'fleet.overview',
 			component: () => import('@/views/Home.vue'),
 		},

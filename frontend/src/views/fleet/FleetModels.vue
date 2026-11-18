@@ -74,6 +74,10 @@
 <script setup lang="ts">
 import {computed, onMounted, onUnmounted, ref} from 'vue'
 import {fleetView, onFleetChange, stationProjects, listTasks, vkPut, escapeHtml, type FleetView} from '@/fleet/api'
+import {useTitle} from '@/composables/useTitle'
+
+useTitle('Models')
+
 
 const view = ref<(FleetView & {models?: any}) | null>(null)
 const q = ref('')

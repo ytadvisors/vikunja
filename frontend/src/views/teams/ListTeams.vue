@@ -1,17 +1,24 @@
 <template>
 	<div
-		class="content loader-container is-max-width-desktop"
+		class="fleet-page loader-container"
 		:class="{ 'is-loading': loading}"
 	>
-		<XButton
-			:to="{name:'teams.create'}"
-			class="is-pulled-end"
-			icon="plus"
-		>
-			{{ $t('team.create.title') }}
-		</XButton>
+		<p class="crumb"><RouterLink :to="{name: 'fleet.home'}">Fleet</RouterLink> / Teams</p>
+		<header class="page-head">
+			<div>
+				<h1><span class="h-icon" style="--c:#9065b0">◎</span>Teams</h1>
+				<p class="sub">People and agents who work together. A team can share projects.</p>
+			</div>
+			<div class="actions">
+				<XButton
+					:to="{name:'teams.create'}"
+					icon="plus"
+				>
+					{{ $t('team.create.title') }}
+				</XButton>
+			</div>
+		</header>
 
-		<h1>{{ $t('team.title') }}</h1>
 		<Card
 			v-if="teams.length > 0"
 			:padding="false"
@@ -32,7 +39,7 @@
 		</Card>
 		<p
 			v-else-if="!isFetching"
-			class="has-text-centered has-text-grey is-italic"
+			class="empty"
 		>
 			{{ $t('team.noTeams') }}
 			<RouterLink :to="{name: 'teams.create'}">

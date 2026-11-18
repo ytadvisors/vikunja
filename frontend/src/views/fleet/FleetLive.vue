@@ -71,7 +71,7 @@
 						<td class="src">{{ l.who || 'hub' }}</td>
 						<td>{{ l.what }}</td>
 						<td class="mono muted">{{ l.detail }}</td>
-						<td><RouterLink v-if="l.task" :to="{name: 'task.detail', params: {id: l.task}}">#{{ l.task }}</RouterLink></td>
+						<td><a v-if="l.task && hubTaskHref(view, l.task)" :href="hubTaskHref(view, l.task) || ''" target="_blank" rel="noopener" title="Opens on the board the hub uses">#{{ l.task }} ↗</a><RouterLink v-else-if="l.task" :to="{name: 'task.detail', params: {id: l.task}}">#{{ l.task }}</RouterLink></td>
 					</tr>
 				</tbody>
 			</table>
@@ -82,7 +82,11 @@
 
 <script setup lang="ts">
 import {computed, onMounted, onUnmounted, ref} from 'vue'
-import {ago, fleetView, onFleetChange, type FleetView} from '@/fleet/api'
+import {ago, fleetView, hubTaskHref, onFleetChange, type FleetView} from '@/fleet/api'
+import {useTitle} from '@/composables/useTitle'
+
+useTitle('Live monitoring')
+
 
 const view = ref<(FleetView & {activity?: any}) | null>(null)
 const q = ref('')

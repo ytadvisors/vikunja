@@ -307,3 +307,69 @@ body { font-size: 15px; line-height: 1.5; }
   > header h2 { margin: 0; font-size: 1.2rem; color: var(--text-strong); flex: 1; }
   h3 { font-size: .95rem; margin: 1.2rem 1.1rem .4rem; color: var(--text-strong); }
 }
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// Vikunja screens brought into the Fleet look (Yomi 2026-11-18: overview "a jumble with huge text and a lot of bright red";
+// "Project navigation from list to gantt to kanban ... very different designs ... more similar in aesthetics with the kanban").
+// ---------------------------------------------------------------------------------------------------------------------------
+
+// Calm status colours: priorities and overdue dates in a muted red/orange, never the bright warning red.
+.priority-label { font-size: .8rem !important; font-weight: 500 !important; }
+.priority-label .icon { padding-inline-end: .25rem !important; transform: scale(.85); }
+.priority-label.high-priority { color: #b4532a !important; }
+.priority-label.not-so-high { color: #a27b2a !important; }
+.priority-label.negligible { color: var(--text-light) !important; }
+[data-is-overdue] .dueDate, .is-overdue, .due-date.is-overdue { color: #b4532a !important; }
+
+// Project cards (My tasks, Projects): normal heading size, compact cards.
+.project-card { min-block-size: 0 !important; border: 1px solid var(--border); box-shadow: none !important; }
+.project-card:hover { border-color: #d3d1cb; background: var(--fleet-quiet, #f7f6f3); }
+.project-card .project-title { font-size: 1rem !important; font-weight: 600 !important; line-height: 1.3 !important; }
+.project-grid, .project-cards { gap: .6rem !important; }
+
+// One project-view system, after Kanban: full width, a warm grey surface, white rounded rows like Kanban cards.
+.switch-view-container .switch-view { background: transparent !important; box-shadow: none !important; border-bottom: 1px solid var(--border); border-radius: 0 !important; padding: 0 !important; gap: .2rem; }
+.switch-view-button { background: transparent !important; color: var(--text-light) !important; border-radius: 0 !important; border-bottom: 2px solid transparent !important; padding: .45rem .75rem !important; margin-bottom: -1px; font-size: .9rem !important; font-weight: 500 !important; box-shadow: none !important; }
+.switch-view-button.is-active { color: var(--text-strong) !important; border-bottom-color: var(--text-strong) !important; font-weight: 600 !important; }
+
+.project-list .list-view, .project-list .is-max-width-desktop { max-inline-size: none !important; }
+.project-list .list-view > .card, .project-table .card, .project-gantt .card, .project-gantt .gantt-chart-container {
+  background: var(--grey-100) !important; border: 0 !important; box-shadow: none !important; border-radius: 10px !important; padding: .5rem !important;
+}
+.project-list .tasks { display: flex; flex-direction: column; gap: .35rem; padding: 0 !important; }
+.project-list .single-task { background: var(--white); border-radius: 8px !important; box-shadow: 0 1px 2px rgba(15, 15, 15, .06); border: 0 !important; }
+.project-list .single-task:hover { box-shadow: 0 2px 6px rgba(15, 15, 15, .1); }
+.project-table table.table { background: transparent !important; border-collapse: separate !important; border-spacing: 0 .3rem; }
+.project-table table.table thead th { background: transparent !important; border: 0 !important; font-size: .78rem; font-weight: 500; color: var(--text-light); text-transform: none; }
+.project-table table.table tbody tr { background: var(--white); box-shadow: 0 1px 2px rgba(15, 15, 15, .06); }
+.project-table table.table tbody td { border: 0 !important; }
+.project-table table.table tbody td:first-child { border-radius: 8px 0 0 8px; }
+.project-table table.table tbody td:last-child { border-radius: 0 8px 8px 0; }
+.list-view__add-task, .table-view__add-task { background: var(--white); border-radius: 8px; }
+.project-gantt .gantt-options { background: transparent !important; padding: 0 0 .6rem !important; }
+
+// My tasks, Upcoming, Projects, Labels, Teams on the Fleet frame.
+.fleet-page .project-grid { --project-grid-item-height: 64px !important; --project-grid-gap: .6rem !important; }
+.fleet-page .project-card { padding: .7rem .9rem !important; border-radius: 10px !important; }
+.fleet-page .project-card .project-title { align-self: center !important; }
+.fleet-page .project-header { justify-content: space-between; }
+.fleet-page .project-header .action-buttons { display: flex; gap: .5rem; }
+.fleet-page .fleet-addtask { max-inline-size: none !important; margin-bottom: 1rem; }
+.fleet-tasklist { text-align: start; }
+.fleet-tasklist .card, .fleet-tasklist .tasks-container { background: var(--grey-100) !important; border: 0 !important; box-shadow: none !important; border-radius: 10px !important; padding: .5rem !important; }
+.fleet-tasklist .tasks { display: flex; flex-direction: column; gap: .35rem; padding: 0 !important; }
+.fleet-tasklist .single-task { background: var(--white); border-radius: 8px !important; box-shadow: 0 1px 2px rgba(15, 15, 15, .06); border: 0 !important; }
+.fleet-tasklist .single-task:hover { box-shadow: 0 2px 6px rgba(15, 15, 15, .1); }
+.fleet-page .teams { list-style: none; margin: 0 !important; padding: 0; }
+.fleet-page .teams li { border-bottom: 1px solid var(--border-light); margin: 0 !important; }
+.fleet-page .teams li:last-child { border-bottom: 0; }
+.fleet-page .teams li a { display: block; padding: .7rem 1rem; color: var(--text-strong); font-weight: 500; }
+.fleet-page .teams li a:hover { background: var(--fleet-quiet, #f7f6f3); }
+.fleet-page .teams li p { margin: 0; }
+.fleet-page .labels-list { display: flex; flex-wrap: wrap; gap: .4rem; }
+.fleet-page .labels-list .tag { margin: 0 !important; border-radius: 6px; font-size: .82rem; }
+.fleet-page .project-card { flex-wrap: nowrap !important; align-items: center !important; }
+.fleet-page .project-card .project-title { flex: 1 1 auto; block-size: auto !important; max-block-size: none !important; min-inline-size: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; -webkit-line-clamp: unset !important; display: block !important; margin: 0 !important; }
+.fleet-page .project-card .project-actions { flex: none; }
+.fleet-page .project-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important; inline-size: 100% !important; }
+.fleet-page .project-grid-item { min-inline-size: 0; }

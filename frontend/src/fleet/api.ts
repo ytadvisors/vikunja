@@ -85,3 +85,20 @@ export function ago(t: string | number | null | undefined, now = Date.now()): st
 	const m = Math.round(ms / 60000)
 	return m < 1 ? 'just now' : m < 60 ? `${m} min ago` : m < 1440 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} d ago`
 }
+
+// Tasks the hub works on live on the board the hub uses (view.vikunja). When this app is a different board (staging), link there
+// instead of opening a task number this board does not have.
+export function hubTaskHref(view: any, id: number | string): string | null {
+	const base = view?.vikunja
+	if (!base) {
+		return null
+	}
+	try {
+		if (new URL(base).origin === window.location.origin) {
+			return null
+		}
+	} catch {
+		return null
+	}
+	return `${base.replace(/\/$/, '')}/tasks/${id}`
+}

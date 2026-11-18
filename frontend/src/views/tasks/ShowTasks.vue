@@ -1,11 +1,23 @@
 <template>
 	<div
 		v-cy="'showTasks'"
-		class="is-max-width-desktop has-text-start"
+		:class="showAll ? 'fleet-tasklist' : 'fleet-page fleet-tasklist'"
 	>
-		<h2 class="mbe-2 title">
+		<h2
+			v-if="showAll"
+			class="sec"
+		>
 			{{ pageTitle }}
 		</h2>
+		<template v-else>
+			<p class="crumb"><RouterLink :to="{name: 'fleet.home'}">Fleet</RouterLink> / Upcoming</p>
+			<header class="page-head">
+				<div>
+					<h1><span class="h-icon" style="--c:#0f7b6c">◷</span>Upcoming</h1>
+					<p class="sub">{{ pageTitle }}</p>
+				</div>
+			</header>
+		</template>
 		<Message
 			v-if="filteredLabels.length > 0"
 			class="label-filter-info mbe-2"
@@ -315,7 +327,7 @@ watch(
 	([from, to, filterId]) => loadPendingTasks(from, to, filterId),
 	{immediate: true},
 )
-watchEffect(() => setTitle(pageTitle.value))
+watchEffect(() => setTitle(showAll.value ? "My tasks" : "Upcoming"))
 </script>
 
 <style lang="scss" scoped>

@@ -122,6 +122,10 @@
 import {computed, onMounted, onUnmounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ago, fleetView, giveTask, isMission, listTasks, onFleetChange, stationProjects, vkGet, type FleetView} from '@/fleet/api'
+import {useTitle} from '@/composables/useTitle'
+
+useTitle('Fleet')
+
 
 const router = useRouter()
 const view = ref<FleetView | null>(null)
