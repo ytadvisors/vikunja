@@ -402,3 +402,101 @@ body { font-size: 15px; line-height: 1.5; }
 .menu-list.other-menu-items:nth-of-type(2) li:nth-child(1) .menu-item-icon { color: #e03e3e; }  // Tasks
 .menu-list.other-menu-items:nth-of-type(2) li:nth-child(2) .menu-item-icon { color: #d9730d; }  // Teams
 .menu-list.other-menu-items:nth-of-type(2) li:nth-child(3) .menu-item-icon { color: #9065b0; }  // Time tracking
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// Sentry direction (Yomi 2026-11-18: "Use sentry for design direction for spacing and admin panel component design, graphs
+// navigation etc. ... It looks the most professional and technically strong"). Values read from Sentry's issue page:
+// body 14, meta 12/500, labels 11/500 uppercase, page title 20; buttons 32 px, padding 0 12px, radius 6, 14/500, 1px border;
+// panels white, 1px #dad9de, radius 6, padding 12, grey header strip; spacing on a 4 px grid (4/8/12/16/24/32).
+// This block supersedes the earlier sizes above where they differ.
+// ---------------------------------------------------------------------------------------------------------------------------
+:root { --fx-line: #dad9de; --fx-strip: rgba(16, 16, 48, .03); --fx-r: 6px; }
+
+// Type: page titles 20 (were 28), sections 14/600, labels 11 uppercase
+.app-content h1, .app-content h1.title, .app-content .title.is-1, .app-content .heading .title, .fleet-page .page-head h1 { font-size: 20px !important; font-weight: 600 !important; letter-spacing: -.01em; }
+.fleet-page .page-head { min-height: 0; margin-bottom: 16px; }
+.fleet-page .page-head .sub { margin-top: 4px; font-size: 14px; }
+.fleet-page .h-icon { width: 24px; height: 24px; font-size: .8rem; border-radius: var(--fx-r); }
+.app-content h2, .app-content .title.is-2, .fleet-page .sec, .fleet-page .hero h2, .side-panel > header h2 { font-size: 16px !important; font-weight: 600 !important; }
+.app-content h3, .app-content h4, .fleet-page .row-h, .fleet-page .card > h2, .fleet-page .card > header { font-size: 14px !important; font-weight: 600 !important; }
+.fleet-label, .action-heading, .action-buttons .heading, .menu-label.fleet-group, .fleet-page .ntable th, .app-content .table thead th { font-size: 11px !important; font-weight: 500 !important; letter-spacing: .06em; text-transform: uppercase; color: var(--text-light) !important; }
+
+// Buttons: one shape everywhere
+.app-content .button, .fleet-page .primary, .fleet-page .ghost, .side-panel .primary, .side-panel .ghost {
+  height: 32px; min-height: 32px; padding: 0 12px !important; border-radius: var(--fx-r) !important; font-size: 14px !important; font-weight: 500 !important;
+  border: 1px solid var(--fx-line) !important; background: var(--white) !important; color: var(--text-strong) !important;
+  box-shadow: 0 1px 2px rgba(43, 34, 51, .04) !important; gap: 6px; line-height: 1;
+}
+.app-content .button:hover, .fleet-page .ghost:hover { background: var(--fx-strip) !important; }
+.app-content .button.is-primary, .fleet-page .primary, .side-panel .primary { background: #2383e2 !important; border-color: #1b6fc2 !important; color: #fff !important; }
+.app-content .button.is-primary:hover, .fleet-page .primary:hover { background: #1b6fc2 !important; }
+.app-content .button.is-danger, .fleet-page .ghost.danger { color: #c4321f !important; }
+.app-content .button.is-small, .fleet-page .sm { height: 24px; min-height: 24px; padding: 0 8px !important; font-size: 12px !important; }
+.app-content .button .icon { margin: 0 !important; width: 14px; }
+
+// Panels
+.fleet-page .card, .app-content .card { border: 1px solid var(--fx-line) !important; border-radius: var(--fx-r) !important; box-shadow: none !important; }
+.fleet-page .card > h2, .fleet-page .card > header, .app-content .card-header { background: var(--fx-strip) !important; padding: 8px 12px !important; border-bottom: 1px solid var(--fx-line) !important; }
+.fleet-page .ntable td { padding: 8px 12px; }
+.fleet-page .ntable th { padding: 8px 12px; background: var(--fx-strip); }
+
+// Project pages: the top bar title is a small label; the body sits in the same frame as every page
+.project-title-wrapper .project-title, .project-title-button { font-size: 16px !important; font-weight: 600 !important; }
+.app-content.project .fleet-page { padding-top: 0; }
+.app-content.project .fleet-page.is-wide { max-width: none; }
+
+// Task page, Sentry issue layout: main column plus a 300 px sidebar of sections
+.task-view .columns:has(> .action-buttons) { display: flex; gap: 24px; }
+.task-view .detail-content { flex: 1 1 auto; min-width: 0; }
+.task-view .action-buttons.column { flex: 0 0 300px !important; width: 300px !important; max-width: 300px !important; padding: 0 0 0 24px !important; border-left: 1px solid var(--fx-line); display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-content: start; }
+.task-view .action-buttons .button { inline-size: auto !important; width: 100%; margin: 0 !important; justify-content: flex-start !important; padding: 0 10px !important; font-size: 13px !important; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.task-view .action-buttons .button.button--mark-done { grid-column: 1 / -1; justify-content: center !important; background: #0f7b6c !important; border-color: #0b6458 !important; color: #fff !important; font-weight: 600 !important; }
+.task-view .action-buttons .button.button--mark-done:not(.is-pending) { background: var(--white) !important; color: var(--text-strong) !important; border-color: var(--fx-line) !important; }
+.task-view .action-buttons > :not(.button):not(.action-heading) { grid-column: 1 / -1; }
+.task-view .action-buttons .action-heading { grid-column: 1 / -1; margin: 12px 0 0 !important; padding-top: 12px; border-top: 1px solid var(--fx-line); }
+.task-view .action-buttons .button.is-danger { grid-column: 1 / -1; }
+.task-view .details .column { padding: 8px 12px !important; }
+.task-view .details .heading, .task-view .details .detail-title { font-size: 11px !important; text-transform: uppercase; letter-spacing: .06em; color: var(--text-light); font-weight: 500 !important; }
+
+// Teams table
+.fleet-page .teams-table td .muted { font-size: 12px; }
+
+// Faint grey canvas, white surfaces brought to the foreground (Yomi 2026-11-18, after Sentry)
+:root { --fx-canvas: #f7f7f9; }
+.app-content { background: var(--fx-canvas) !important; }
+.app-content .fleet-page .ntable { background: var(--white); border: 1px solid var(--fx-line); border-radius: var(--fx-r); border-collapse: separate; border-spacing: 0; overflow: hidden; }
+.app-content .fleet-page .ntable tbody tr:last-child td { border-bottom: 0; }
+.app-content .fleet-page .tile, .app-content .fleet-page .chart-box, .app-content .fleet-page .devcard, .app-content .fleet-page .rec, .app-content .fleet-page .cols, .app-content .fleet-page .chip, .app-content .fleet-page .dev, .app-content .fleet-page .project-card, .app-content .fleet-page .model-card, .app-content .fleet-page .list, .app-content .fleet-page .ask-card { background: var(--white) !important; border-color: var(--fx-line) !important; }
+.app-content .fleet-tasklist .card, .app-content .project-list .list-view > .card, .app-content .project-table .card, .app-content .project-gantt .card { background: var(--white) !important; border: 1px solid var(--fx-line) !important; padding: 0 !important; }
+.app-content .fleet-tasklist .tasks, .app-content .project-list .tasks { gap: 0 !important; }
+.app-content .fleet-tasklist .single-task, .app-content .project-list .single-task { border-radius: 0 !important; box-shadow: none !important; border-bottom: 1px solid var(--border-light) !important; }
+.app-content .fleet-tasklist .single-task:hover, .app-content .project-list .single-task:hover { background: var(--fx-strip) !important; box-shadow: none !important; }
+.app-content .project-table table.table tbody tr { box-shadow: none; }
+.app-content .kanban .bucket .bucket-header, .app-content .kanban .bucket, .app-content .kanban .bucket .bucket-footer { background-color: #eeedf1 !important; }
+.app-content .kanban .task-card, .app-content .kanban .kanban-card { border: 1px solid var(--fx-line); box-shadow: 0 1px 2px rgba(43, 34, 51, .04) !important; }
+.app-content .task-view { background: transparent !important; }
+.app-content .task-view .detail-content { background: var(--white); border: 1px solid var(--fx-line); border-radius: var(--fx-r); padding: 16px !important; }
+.app-content .task-view .action-buttons.column { background: var(--white); border: 1px solid var(--fx-line) !important; border-radius: var(--fx-r); padding: 12px !important; }
+.app-content .task-view .columns:has(> .action-buttons) { gap: 16px; }
+
+// Right panel toggle
+.panel-toggle-row { display: flex; justify-content: flex-end; margin: 0 0 8px; }
+.task-view .columns.side-panel-hidden > .action-buttons { display: none !important; }
+.task-view .columns.side-panel-hidden > .detail-content { flex: 1 1 100% !important; max-width: none !important; width: 100% !important; }
+
+// Icon rail: the left sidebar collapses to icons (Yomi 2026-11-18, after Sentry)
+.menu-container .rail-toggle { position: absolute; right: 8px; bottom: 10px; width: 28px; height: 28px; border-radius: var(--fx-r); border: 1px solid var(--fx-line); background: var(--white); color: var(--text-light); cursor: pointer; font-size: 14px; line-height: 1; z-index: 5; }
+.menu-container .rail-toggle:hover { color: var(--text-strong); background: var(--fx-strip); }
+.menu-container.is-rail { overflow-x: hidden; }
+.menu-container.is-rail .menu-text, .menu-container.is-rail .menu-label, .menu-container.is-rail nav.menu:not(.top-menu), .menu-container.is-rail .logo, .menu-container.is-rail .powered-by, .menu-container.is-rail .menu-list a > :not(.menu-item-icon) { display: none !important; }
+.menu-container.is-rail .menu-list a { justify-content: center; padding-inline: 0 !important; font-size: 0 !important; }
+.menu-container.is-rail .menu-item-icon { margin: 0 !important; font-size: 15px; }
+.menu-container.is-rail .rail-toggle { right: 14px; }
+
+// Left-aligned, full-width pages (Yomi 2026-11-18: "the left aligned fullwidth and the maximization of space use", after Sentry)
+.fleet-page { max-width: none !important; margin: 0 !important; padding: 16px 24px 48px !important; }
+.app-content.project .fleet-page { padding-top: 8px !important; }
+.fleet-page .page-head .sub { max-width: 900px; }
+.fleet-page .hero, .fleet-page .ask { text-align: left !important; }
+.fleet-page .hero .ask, .fleet-page .ask-card { margin-inline: 0 !important; }
+.task-view-container .task-view { max-width: none !important; margin: 0 !important; padding: 16px 24px !important; }

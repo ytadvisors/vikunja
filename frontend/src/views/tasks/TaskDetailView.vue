@@ -85,8 +85,24 @@
 
 			<ChecklistSummary :task="task" />
 
-			<!-- Content and buttons -->
-			<div class="columns mbs-2">
+			<!-- Content and buttons; the right panel can be hidden to make room (remembered per browser) -->
+			<div
+				v-if="canWrite"
+				class="panel-toggle-row d-print-none"
+			>
+				<button
+					type="button"
+					class="button is-small panel-toggle"
+					:aria-pressed="sidePanelHidden"
+					@click="toggleSidePanel"
+				>
+					{{ sidePanelHidden ? 'Show panel' : 'Hide panel' }}
+				</button>
+			</div>
+			<div
+				class="columns mbs-2"
+				:class="{'side-panel-hidden': sidePanelHidden}"
+			>
 				<!-- Content -->
 				<div
 					:class="{'is-two-thirds': canWrite}"
@@ -773,6 +789,24 @@ const taskQuery = useTask(
 	],
 )
 const task = ref(createTaskDraft())
+
+const SIDE_PANEL_KEY = 'fleet.taskSidePanelHidden'
+function readSidePanel(): boolean {
+	try {
+		return localStorage.getItem(SIDE_PANEL_KEY) === '1'
+	} catch {
+		return false
+	}
+}
+const sidePanelHidden = ref(readSidePanel())
+function toggleSidePanel() {
+	sidePanelHidden.value = !sidePanelHidden.value
+	try {
+		localStorage.setItem(SIDE_PANEL_KEY, sidePanelHidden.value ? '1' : '0')
+	} catch {
+		// private window or blocked storage: the toggle still works for this visit
+	}
+}
 
 // Only fields edited here stay local; the rest follows the cache.
 function followServerFields(loaded: ITask) {

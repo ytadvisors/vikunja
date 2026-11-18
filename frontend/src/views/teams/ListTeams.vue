@@ -19,24 +19,48 @@
 			</div>
 		</header>
 
-		<Card
+		<div
 			v-if="teams.length > 0"
-			:padding="false"
-			:has-content="false"
+			class="card"
 		>
-			<ul class="teams">
-				<li
-					v-for="team in teams"
-					:key="team.id"
-				>
-					<RouterLink :to="{name: 'teams.edit', params: {id: team.id}}">
-						<p>
-							{{ team.name }}
-						</p>
-					</RouterLink>
-				</li>
-			</ul>
-		</Card>
+			<table class="ntable teams-table">
+				<thead>
+					<tr>
+						<th>Team</th>
+						<th>Description</th>
+						<th>Members</th>
+						<th>Created</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr
+						v-for="team in teams"
+						:key="team.id"
+						@click="router.push({name: 'teams.edit', params: {id: team.id}})"
+					>
+						<td>
+							<RouterLink
+								:to="{name: 'teams.edit', params: {id: team.id}}"
+								class="team-name"
+								@click.stop
+							>
+								{{ team.name }}
+							</RouterLink>
+						</td>
+						<td class="muted">
+							{{ plain(team.description) || '–' }}
+						</td>
+						<td>
+							<span class="muted">{{ (team.members || []).length }}</span>
+							<span class="team-members">{{ (team.members || []).slice(0, 5).map((m: any) => m.name || m.username).join(', ') }}{{ (team.members || []).length > 5 ? ' …' : '' }}</span>
+						</td>
+						<td class="muted">
+							{{ team.created ? new Date(team.created).toLocaleDateString() : '' }}
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 		<p
 			v-else-if="!isFetching"
 			class="empty"
@@ -57,7 +81,7 @@
 import { useI18n } from 'vue-i18n'
 import {useRouteQuery} from '@vueuse/router'
 
-import Card from '@/components/misc/Card.vue'
+import {useRouter} from 'vue-router'
 import Pagination from '@/components/misc/Pagination.vue'
 import {normalizePageNumber} from '@/client/queries/pagination'
 import {useClampedPage} from '@/composables/useClampedPage'
@@ -66,6 +90,8 @@ import { useTitle } from '@/composables/useTitle'
 import {useDelayedLoading} from '@/composables/useDelayedLoading'
 
 const { t } = useI18n({useScope: 'global'})
+const router = useRouter()
+const plain = (html?: string) => (html || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 140)
 useTitle(() => t('team.title'))
 
 const page = useRouteQuery('page', '1', {transform: normalizePageNumber})

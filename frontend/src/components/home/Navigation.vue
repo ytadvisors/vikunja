@@ -1,6 +1,6 @@
 <template>
 	<aside
-		:class="{'is-active': baseStore.menuActive, 'is-resizing': isResizing}"
+		:class="{'is-active': baseStore.menuActive, 'is-resizing': isResizing, 'is-rail': sidebarRail && !isMobile}"
 		class="menu-container"
 		:style="{'--sidebar-width': sidebarWidthStyle}"
 	>
@@ -20,10 +20,10 @@
 			</RouterLink>
 			<p class="menu-label fleet-group">Fleet</p>
 			<menu class="menu-list other-menu-items">
-				<li><RouterLink :to="{ name: 'fleet.home'}"><span class="menu-item-icon icon"><Icon icon="tachometer-alt" /></span>Fleet</RouterLink></li>
-				<li><RouterLink :to="{ name: 'fleet.devices'}"><span class="menu-item-icon icon"><Icon icon="sitemap" /></span>Devices</RouterLink></li>
-				<li><RouterLink :to="{ name: 'fleet.models'}"><span class="menu-item-icon icon"><Icon icon="layer-group" /></span>Models</RouterLink></li>
-				<li><RouterLink :to="{ name: 'fleet.live'}"><span class="menu-item-icon icon"><Icon icon="bolt" /></span>Live monitoring</RouterLink></li>
+				<li><RouterLink :to="{ name: 'fleet.home'}"><span class="menu-item-icon icon"><Icon icon="tachometer-alt" /></span><span class="menu-text">Fleet</span></RouterLink></li>
+				<li><RouterLink :to="{ name: 'fleet.devices'}"><span class="menu-item-icon icon"><Icon icon="sitemap" /></span><span class="menu-text">Devices</span></RouterLink></li>
+				<li><RouterLink :to="{ name: 'fleet.models'}"><span class="menu-item-icon icon"><Icon icon="layer-group" /></span><span class="menu-text">Models</span></RouterLink></li>
+				<li><RouterLink :to="{ name: 'fleet.live'}"><span class="menu-item-icon icon"><Icon icon="bolt" /></span><span class="menu-text">Live monitoring</span></RouterLink></li>
 			</menu>
 			<p class="menu-label fleet-group">Work</p>
 			<menu class="menu-list other-menu-items">
@@ -32,7 +32,7 @@
 						:to="{ name: 'fleet.overview'}"
 						:class="{'router-link-active': isWork}"
 					>
-						<span class="menu-item-icon icon"><Icon icon="calendar" /></span>Tasks
+						<span class="menu-item-icon icon"><Icon icon="calendar" /></span><span class="menu-text">Tasks</span>
 					</RouterLink>
 				</li>
 				<li>
@@ -97,8 +97,18 @@
 			utm-medium="navigation"
 		/>
 
-		<div
+		<button
 			v-if="!isMobile"
+			type="button"
+			class="rail-toggle"
+			:title="sidebarRail ? 'Expand the sidebar' : 'Collapse to icons'"
+			:aria-label="sidebarRail ? 'Expand the sidebar' : 'Collapse to icons'"
+			@click="toggleSidebarRail"
+		>
+			{{ sidebarRail ? '»' : '«' }}
+		</button>
+		<div
+			v-if="!isMobile && !sidebarRail"
 			class="resize-handle"
 			@mousedown="startResize"
 			@touchstart="startResize"
@@ -120,7 +130,7 @@ import {useProjects} from '@/composables/useProjects'
 import {useConfigStore} from '@/stores/config'
 import {PRO_FEATURE} from '@/constants/proFeatures'
 import ProjectsNavigation from '@/components/home/ProjectsNavigation.vue'
-import {useSidebarResize} from '@/composables/useSidebarResize'
+import {useSidebarResize, sidebarRail, toggleSidebarRail} from '@/composables/useSidebarResize'
 
 const baseStore = useBaseStore()
 const route = useRoute()

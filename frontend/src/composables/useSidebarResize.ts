@@ -13,6 +13,25 @@ function clampWidth(width: number): number {
 
 // Shared state across all component instances
 const isResizing = ref(false)
+// Icon rail (Fleet HQ): the sidebar collapses to its icons; remembered per browser.
+const RAIL_KEY = 'fleet.sidebarRail'
+const RAIL_WIDTH = 56
+function readRail(): boolean {
+	try {
+		return localStorage.getItem(RAIL_KEY) === '1'
+	} catch {
+		return false
+	}
+}
+export const sidebarRail = ref(readRail())
+export function toggleSidebarRail() {
+	sidebarRail.value = !sidebarRail.value
+	try {
+		localStorage.setItem(RAIL_KEY, sidebarRail.value ? '1' : '0')
+	} catch {
+		// storage blocked: the toggle still works for this visit
+	}
+}
 const currentWidth = ref(DEFAULT_SIDEBAR_WIDTH)
 let initialized = false
 let watcherInitialized = false
@@ -61,6 +80,9 @@ export function useSidebarResize() {
 	const sidebarWidthStyle = computed(() => {
 		if (isMobile.value) {
 			return '70vw'
+		}
+		if (sidebarRail.value) {
+			return `${RAIL_WIDTH}px`
 		}
 		return `${currentWidth.value}px`
 	})

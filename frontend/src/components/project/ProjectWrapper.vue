@@ -1,9 +1,10 @@
 <template>
 	<div
-		class="loader-container"
+		class="loader-container fleet-page"
 		:class="{
 			'is-loading': isLoadingProject,
 			'is-archived': currentProject.is_archived,
+			'is-wide': isWideView,
 		}"
 	>
 		<h1 class="project-title-print">
@@ -103,6 +104,10 @@ import {useCurrentProject} from '@/composables/useCurrentProject'
 
 import type {ProjectView} from '@/client/generated'
 import {normalizeProject} from '@/client/queries/projects'
+
+// Board and timeline views use the full width; list and table sit in the standard frame.
+const isWideView = computed(() => ['kanban', 'gantt'].includes(String(views.value?.find((v: any) => v.id === props.viewId)?.viewKind ?? views.value?.find((v: any) => v.id === props.viewId)?.view_kind ?? '')))
+
 
 const props = defineProps<{
 	isLoadingProject: boolean,
