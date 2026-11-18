@@ -691,3 +691,11 @@ body { font-size: 15px; line-height: 1.5; }
 .fleet-page .picker { display: block; margin-bottom: 16px; }
 .fleet-page .picker select { width: 100% !important; min-width: 0 !important; height: 36px; border: 1px solid var(--fx-line) !important; border-radius: var(--fx-r) !important; background: #fff !important; padding: 0 12px !important; font-size: 14px !important; }
 .fleet-page .tiles { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important; }
+// Areas without a secondary panel: the toolbar starts right after the rail
+@media screen and (min-width: 769px) {
+  body:has(.menu-container.nav2.no-panel) .navbar { inset-inline-start: 74px !important; }
+}
+// The Android head sits in a rounded square at the top of the rail (like Sentry's organisation badge)
+.nav2 .rail-logo { width: 40px !important; height: 40px !important; border-radius: 8px; background: #fdf1ee; border: 1px solid #f3d2ca; display: grid !important; place-items: center; margin-bottom: 10px; }
+.nav2 .rail-logo svg { width: 28px !important; height: 28px !important; }
+:root.dark .nav2 .rail-logo { background: #3a2622; border-color: #5a3329; }

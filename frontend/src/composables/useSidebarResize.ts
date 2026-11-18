@@ -24,6 +24,8 @@ function readRail(): boolean {
 	}
 }
 export const sidebarRail = ref(readRail())
+// Set by the navigation: true on areas with no secondary panel, so the sidebar and the page offset are only the rail.
+export const panelAbsent = ref(false)
 export function toggleSidebarRail() {
 	sidebarRail.value = !sidebarRail.value
 	try {
@@ -81,7 +83,7 @@ export function useSidebarResize() {
 		if (isMobile.value) {
 			return '70vw'
 		}
-		if (sidebarRail.value) {
+		if (sidebarRail.value || panelAbsent.value) {
 			return `${RAIL_WIDTH}px`
 		}
 		return `${currentWidth.value}px`

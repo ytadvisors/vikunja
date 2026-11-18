@@ -1,5 +1,13 @@
 <template>
 	<div class="fleet-page fleet-home">
+		<p class="crumb">Monitoring / Overview</p>
+		<header class="page-head">
+			<div>
+				<h1><span class="h-icon" style="--c:#2383e2">◉</span>Monitoring</h1>
+				<p class="sub">Your computers, the work they do, and what needs attention.</p>
+			</div>
+		</header>
+		<MonitorTabs />
 		<section class="ask">
 			<div class="ask-icon" aria-hidden="true">
 				<svg viewBox="0 0 48 48" width="40" height="40"><circle cx="24" cy="24" r="22" fill="#fff" stroke="#e9e9e7" /><path d="M14 30a10 10 0 0 1 20 0" fill="none" stroke="#37352f" stroke-width="2.5" stroke-linecap="round" /><path d="M24 30l6-8" stroke="#e16b16" stroke-width="3" stroke-linecap="round" /><circle cx="24" cy="30" r="2.6" fill="#37352f" /></svg>
@@ -123,6 +131,7 @@ import {computed, onMounted, onUnmounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {ago, fleetView, giveTask, isMission, listTasks, onFleetChange, stationProjects, vkGet, type FleetView} from '@/fleet/api'
 import {useTitle} from '@/composables/useTitle'
+import MonitorTabs from '@/components/fleet/MonitorTabs.vue'
 
 useTitle('Fleet')
 

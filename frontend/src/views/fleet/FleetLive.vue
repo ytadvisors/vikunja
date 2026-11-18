@@ -1,13 +1,14 @@
 <template>
 	<div class="fleet-page">
-		<p class="crumb"><RouterLink :to="{name: 'fleet.home'}">Fleet</RouterLink> / Live monitoring</p>
+		<p class="crumb">Monitoring / {{ view2 === 'events' ? 'Events' : 'Availability' }}</p>
 		<header class="page-head">
 			<div>
-				<h1><span class="h-icon" style="--c:#e03e3e">◉</span>Live monitoring</h1>
+				<h1><span class="h-icon" style="--c:#2383e2">◉</span>Monitoring</h1>
 				<p class="sub">Watch the whole system, or pick one device. Everything the hub records appears as it happens, and each event links to its task.</p>
 			</div>
 		</header>
 
+		<MonitorTabs />
 		<div class="picker">
 			<select v-model="dev" aria-label="What to monitor">
 				<option value="">Whole system</option>
@@ -26,10 +27,6 @@
 			<div class="tile"><span>Errors</span><b :class="{red: errTotal}">{{ errTotal }}</b><small>{{ range === '24h' ? 'last 24 hours' : 'last 7 days' }}</small></div>
 		</section>
 
-		<nav class="tabs live-tabs" role="tablist" aria-label="Live monitoring views">
-			<button type="button" role="tab" :aria-selected="view2 === 'availability'" :class="{on: view2 === 'availability'}" @click="view2 = 'availability'">Availability</button>
-			<button type="button" role="tab" :aria-selected="view2 === 'events'" :class="{on: view2 === 'events'}" @click="view2 = 'events'">Events<span class="badge">{{ rows.length }}</span></button>
-		</nav>
 		<template v-if="view2 === 'availability'">
 		<section v-if="!dev" class="card monitors">
 			<header><span>Availability, last 24 hours</span><span class="muted sm">one slot per 10-minute network scan</span></header>
@@ -99,6 +96,8 @@
 
 <script setup lang="ts">
 import {computed, onMounted, onUnmounted, ref} from 'vue'
+import {useRoute} from 'vue-router'
+import MonitorTabs from '@/components/fleet/MonitorTabs.vue'
 import {ago, fleetView, hubTaskHref, onFleetChange, type FleetView} from '@/fleet/api'
 import StatusStrip from '@/components/fleet/StatusStrip.vue'
 import {useTitle} from '@/composables/useTitle'
@@ -122,7 +121,8 @@ const okTotal = computed(() => buckets.value.reduce((a, b) => a + b.jobs + b.mis
 const errTotal = computed(() => buckets.value.reduce((a, b) => a + b.errors, 0))
 const dev = ref('')
 // Two views of the same data: availability over time, or the event log (Yomi 2026-11-18: no scrolling to reach events)
-const view2 = ref<'availability' | 'events'>('availability')
+const route = useRoute()
+const view2 = computed<'availability' | 'events'>(() => (route.query.tab === 'events' ? 'events' : 'availability'))
 const sys = computed<any>(() => (view.value as any)?.system || null)
 const net = computed<any>(() => (view.value as any)?.network || null)
 const fleetComputers = computed(() => (view.value?.computers || []).filter(c => c.state !== 'waiting for approval'))

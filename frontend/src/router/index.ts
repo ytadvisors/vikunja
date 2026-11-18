@@ -50,7 +50,7 @@ const router = createRouter({
 		{
 			path: '/',
 			name: 'home',
-			redirect: {name: 'fleet.home'},
+			redirect: {name: 'fleet.live'},  // lead with live monitoring (Yomi 2026-11-18)
 		},
 		{
 			path: '/:pathMatch(.*)*',
