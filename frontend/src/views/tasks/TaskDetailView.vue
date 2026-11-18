@@ -87,19 +87,6 @@
 
 			<!-- Content and buttons; the right panel can be hidden to make room (remembered per browser) -->
 			<div
-				v-if="canWrite"
-				class="panel-toggle-row d-print-none"
-			>
-				<button
-					type="button"
-					class="button is-small panel-toggle"
-					:aria-pressed="sidePanelHidden"
-					@click="toggleSidePanel"
-				>
-					{{ sidePanelHidden ? 'Show panel' : 'Hide panel' }}
-				</button>
-			</div>
-			<div
 				class="columns mbs-2"
 				:class="{'side-panel-hidden': sidePanelHidden}"
 			>
@@ -472,11 +459,37 @@
 					/>
 				</div>
 				
+				<div
+					v-if="(canWrite || isModal) && sidePanelHidden"
+					class="side-strip d-print-none"
+				>
+					<button
+						type="button"
+						class="edge-toggle"
+						title="Show the side panel"
+						aria-label="Show the side panel"
+						@click="toggleSidePanel"
+					>
+						«
+					</button>
+				</div>
 				<!-- Task Actions -->
 				<div
 					v-if="canWrite || isModal"
 					class="column is-one-third action-buttons d-print-none"
 				>
+					<div class="panel-head">
+						<span class="action-heading">Details</span>
+						<button
+							type="button"
+							class="edge-toggle"
+							title="Hide the side panel"
+							aria-label="Hide the side panel"
+							@click="toggleSidePanel"
+						>
+							»
+						</button>
+					</div>
 					<template v-if="canWrite">
 						<XButton
 							v-shortcut="SHORTCUTS.taskDetail.done"

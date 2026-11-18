@@ -500,3 +500,63 @@ body { font-size: 15px; line-height: 1.5; }
 .fleet-page .hero, .fleet-page .ask { text-align: left !important; }
 .fleet-page .hero .ask, .fleet-page .ask-card { margin-inline: 0 !important; }
 .task-view-container .task-view { max-width: none !important; margin: 0 !important; padding: 16px 24px !important; }
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// One grey (Yomi 2026-11-18: "Mutilple shades of grey need to change to 1 shade."). Every grey fill in the app is --fx-grey:
+// sidebar, page canvas, panel header strips, hovers, selected rows, board columns, badges, "no data" timeline slots.
+// Borders keep the line colour; text greys are unchanged.
+// ---------------------------------------------------------------------------------------------------------------------------
+:root, :root body {
+  --fx-grey: #f3f3f6;
+  --fx-canvas: var(--fx-grey); --fx-strip: var(--fx-grey); --fleet-quiet: var(--fx-grey); --fleet-sidebar: var(--fx-grey);
+  --site-background: var(--fx-grey); --grey-100: var(--fx-grey); --grey-50: var(--fx-grey);
+}
+.menu-container, .menu-container .menu, .app-content { background: var(--fx-grey) !important; }
+.app-content .kanban .bucket, .app-content .kanban .bucket .bucket-header, .app-content .kanban .bucket .bucket-footer { background-color: var(--fx-grey) !important; }
+.app-content .kanban { background: transparent; }
+.app-content .kanban .bucket { border: 1px solid var(--fx-line); }
+.status-strip .none, .strip .none { background: var(--fx-grey) !important; }
+.app-content .tag:not([style*="background"]), .fleet-page .badge { background: var(--fx-grey) !important; }
+.app-content .menu-list a:hover, .menu-container .menu-list a.router-link-active { background: #fff !important; }
+.fleet-page .ntable tbody tr:hover, .fleet-page .ntable tbody tr.sel, .app-content .single-task:hover { background: var(--fx-grey) !important; }
+
+// One panel toggle: the same square arrow button on both sides
+.edge-toggle { width: 28px; height: 28px; display: inline-grid; place-items: center; border-radius: var(--fx-r); border: 1px solid var(--fx-line); background: #fff; color: var(--text-light); cursor: pointer; font-size: 16px; line-height: 1; padding: 0; box-shadow: 0 1px 2px rgba(43, 34, 51, .04); }
+.edge-toggle:hover { color: var(--text-strong); background: var(--fx-grey); }
+.menu-container .rail-toggle.edge-toggle { position: absolute; right: 12px; bottom: 12px; }
+.panel-toggle-row { display: flex; justify-content: flex-end; margin: 0 0 8px; }
+
+// Bigger icons in the collapsed rail
+.menu-container.is-rail .menu-list a { height: 40px; display: flex !important; align-items: center; }
+.menu-container.is-rail .menu-item-icon, .menu-container.is-rail .menu-item-icon svg { font-size: 18px !important; width: 18px !important; height: 18px !important; }
+.menu-container.is-rail .rail-toggle.edge-toggle { right: 14px; }
+// Dark mode keeps one grey too, its dark counterpart
+:root.dark, :root.dark body {
+  --fx-grey: #1f1f23; --fx-line: #34333a;
+  --fx-canvas: var(--fx-grey); --fx-strip: var(--fx-grey); --fleet-quiet: var(--fx-grey); --fleet-sidebar: var(--fx-grey);
+  --site-background: #17171a; --grey-100: var(--fx-grey); --grey-50: var(--fx-grey);
+}
+:root.dark .edge-toggle { background: #26262b; }
+:root.dark .app-content .menu-list a:hover, :root.dark .menu-container .menu-list a.router-link-active { background: #26262b !important; }
+
+// Collapse controls are part of the layout, not floating (Yomi 2026-11-18, after Sentry)
+.menu-container { padding-bottom: 48px !important; }
+.menu-container .rail-toggle.edge-toggle {
+  position: fixed; left: 0; bottom: 0; right: auto; width: var(--sidebar-width); height: 44px; z-index: 6;
+  display: flex; align-items: center; justify-content: flex-start; gap: 8px; padding: 0 16px;
+  border: 0; border-top: 1px solid var(--fx-line); border-radius: 0; box-shadow: none;
+  background: var(--fx-grey); color: var(--text); font-size: 14px; font-weight: 500;
+}
+.menu-container .rail-toggle.edge-toggle:hover { background: #fff; color: var(--text-strong); }
+.menu-container .rail-toggle .menu-item-icon { width: 18px; text-align: center; font-size: 16px; }
+.menu-container.is-rail .rail-toggle.edge-toggle { justify-content: center; padding: 0; right: auto; }
+:root.dark .menu-container .rail-toggle.edge-toggle:hover { background: #26262b; }
+
+.task-view .action-buttons .panel-head { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; margin: -4px 0 4px; padding-bottom: 8px; border-bottom: 1px solid var(--fx-line); }
+.task-view .action-buttons .panel-head .action-heading { margin: 0 !important; padding: 0 !important; border: 0 !important; }
+.task-view .action-buttons .panel-head .edge-toggle { width: 24px; height: 24px; font-size: 14px; }
+.task-view .side-strip { flex: 0 0 36px; display: flex; justify-content: center; padding-top: 12px; background: #fff; border: 1px solid var(--fx-line); border-radius: var(--fx-r); align-self: stretch; }
+.task-view .side-strip .edge-toggle { width: 24px; height: 24px; font-size: 14px; }
+:root.dark .task-view .side-strip { background: #26262b; }
+// In the icon rail the attribution text has no room; it stays in the full sidebar (AGPL "Powered by Vikunja")
+.menu-container.is-rail .menu-bottom-link { display: none !important; }

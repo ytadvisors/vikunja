@@ -100,12 +100,12 @@
 		<button
 			v-if="!isMobile"
 			type="button"
-			class="rail-toggle"
+			class="rail-toggle edge-toggle"
 			:title="sidebarRail ? 'Expand the sidebar' : 'Collapse to icons'"
 			:aria-label="sidebarRail ? 'Expand the sidebar' : 'Collapse to icons'"
 			@click="toggleSidebarRail"
 		>
-			{{ sidebarRail ? '»' : '«' }}
+			<span class="menu-item-icon">{{ sidebarRail ? '»' : '«' }}</span><span class="menu-text">Collapse</span>
 		</button>
 		<div
 			v-if="!isMobile && !sidebarRail"
