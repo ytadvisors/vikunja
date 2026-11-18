@@ -61,10 +61,21 @@
 		</template>
 
 		<template v-if="tab === 'enroll' && view">
-			<div class="steps">
+			<div class="paths" role="tablist">
+				<button type="button" :class="{on: path === 'local'}" @click="path = 'local'"><b>On this network</b><small>Same home or office network as the hub. Found automatically.</small></button>
+				<button type="button" :class="{on: path === 'remote'}" @click="path = 'remote'"><b>From another location</b><small>A computer at another home, office or site, joined through a private Tailscale network.</small></button>
+			</div>
+			<div v-if="path === 'local'" class="steps">
 				<div class="step"><span class="n">1</span><div><h4>Install the station</h4><p>On the computer you want to add, open Terminal and run:</p><pre>curl -fsS http://{{ hubHost }}:18970/install.sh | sh</pre></div></div>
 				<div class="step"><span class="n">2</span><div><h4>Compare the code</h4><p>The computer finds the hub on the network by itself and shows a six-digit code.</p></div></div>
 				<div class="step"><span class="n">3</span><div><h4>Approve it</h4><p>A pairing task with the same code appears in S Stations. Mark it done if the codes match and you expect this computer. Only the owner can approve.</p></div></div>
+			</div>
+			<div v-else class="steps">
+				<p v-if="!tailnet" class="notice">Tailscale is not running on the hub yet. Turn it on there first, signed in to your Tailscale network; this page then shows the hub's private name.</p>
+				<p v-else class="notice ok">The hub is on the Tailscale network <b>{{ tailnet.network }}</b> as <b>{{ tailnet.name }}</b>, with {{ tailnet.peers }} other computer(s) on it.</p>
+				<div class="step"><span class="n">1</span><div><h4>Join your private network</h4><p>On the computer you want to add, install Tailscale (tailscale.com/download) and sign in with the same account{{ tailnet ? ` (network ${tailnet.network})` : '' }}. The computer can then reach the hub from anywhere, encrypted, with no router ports opened.</p></div></div>
+				<div class="step"><span class="n">2</span><div><h4>Install the station</h4><p>In Terminal on that computer:</p><pre>curl -fsS http://{{ tailnet?.name || 'HUB-NAME.your-tailnet.ts.net' }}:18970/install.sh | sh</pre></div></div>
+				<div class="step"><span class="n">3</span><div><h4>Compare the code and approve</h4><p>Exactly as on the local network: the computer shows a six-digit code, a pairing task with the same code appears in S Stations, and only the owner's approval adds it to the fleet. Being on the private network makes a computer reachable; only your approval makes it part of the fleet.</p></div></div>
 			</div>
 			<h2 class="mt">Waiting for approval <span class="badge">{{ pending.length }}</span></h2>
 			<div v-if="!pending.length" class="empty">No computer is waiting.</div>
@@ -104,6 +115,8 @@ const tab = ref<'devices' | 'profiles' | 'enroll'>('devices')
 const q = ref('')
 const stateFilter = ref('')
 const sel = ref('')
+const path = ref<'local' | 'remote'>('local')
+const tailnet = computed(() => (view.value as any)?.tailnet || null)
 const hubHost = new URL(CONSOLE_URL).hostname === '127.0.0.1' ? 'ytwguru3.local' : new URL(CONSOLE_URL).hostname
 
 const all = computed(() => view.value?.computers || [])
@@ -194,4 +207,10 @@ pre { margin: .5rem 0 0; background: var(--fleet-sidebar, #f7f6f3); border-radiu
 .act { margin: 0 1.1rem; padding: .35rem 0; font-size: .85rem; border-bottom: 1px solid var(--border-light); }
 .lv { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-inline-end: .4rem; background: #9b9a97; }
 .lv.ok { background: #448361; } .lv.warn { background: #cb912f; } .lv.error { background: #e03e3e; } .lv.info { background: #2383e2; }
+.paths { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin-bottom: 1rem; }
+.paths button { text-align: left; border: 1px solid var(--border); background: var(--white); border-radius: 12px; padding: .8rem 1rem; cursor: pointer; font: inherit; color: var(--text); }
+.paths button.on { border-color: #2383e2; box-shadow: 0 0 0 2px rgba(35, 131, 226, .15); }
+.paths b { display: block; color: var(--text-strong); }
+.paths small { color: var(--text-light); }
+.notice.ok { background: #dbeddb; color: #1c3829; }
 </style>
