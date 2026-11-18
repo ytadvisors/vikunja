@@ -1,0 +1,176 @@
+// Fleet theme for the Vikunja fork (Vikunja #1193; Yomi 2026-11-18: "Our design isn't very modern", "That's a pretty good design"
+// about Zapier, "Please carry the UI, UX design updates").
+// One layer on top of Vikunja's own tokens, imported last in global.scss, so upstream upgrades merge cleanly: change tokens
+// first, selectors only where a token does not reach. Direction: DESIGN-REFERENCE-CONSOLES-20261118.md (Cloudscape layout,
+// Azure essentials, Zapier's calm look). Status is always shown in words as well as colour (accessibility).
+
+:root {
+  // Accent: one violet for actions and links; a bright brand orange only for the main "create" action.
+  --primary-h: 247deg;
+  --primary-s: 84%;
+  --primary-l: 61%;
+  --fleet-brand: #ff4f00;
+  --fleet-quiet: #f6f3ee;
+
+  // Warm neutrals (Zapier-like) instead of cool blue-greys.
+  --grey-50: hsl(36, 33%, 98%);
+  --grey-100-hsl: 36, 29%, 95%;
+  --grey-100: hsl(var(--grey-100-hsl));
+  --grey-200: hsl(33, 18%, 89%);
+  --grey-300: hsl(30, 12%, 80%);
+  --grey-400: hsl(25, 7%, 62%);
+  --grey-500-hsl: 20, 5%, 44%;
+  --grey-500: hsl(var(--grey-500-hsl));
+  --grey-600: hsl(15, 6%, 33%);
+  --grey-700: hsl(10, 9%, 24%);
+  --grey-800: hsl(5, 14%, 15%);
+  --grey-900: hsl(0, 21%, 10%);
+  --site-background: hsl(40, 100%, 99%);
+  --text: hsl(10, 9%, 24%);
+  --text-strong: hsl(0, 21%, 10%);
+  --text-light: hsl(20, 5%, 44%);
+  --text-muted: hsl(20, 5%, 42%);
+  --border: hsl(33, 18%, 89%);
+  --border-light: hsl(36, 29%, 93%);
+
+  // Status colours, a little calmer.
+  --success-h: 152deg; --success-s: 97%; --success-l: 26%;
+  --danger-h: 357deg; --danger-s: 72%; --danger-l: 48%;
+  --warning-h: 38deg; --warning-s: 92%; --warning-l: 40%;
+
+  // Shape and depth.
+  --fleet-radius: 10px;
+  --fleet-radius-lg: 14px;
+  --shadow-xs: 0 1px 1px rgba(32, 21, 21, .04);
+  --shadow-sm: 0 1px 2px rgba(32, 21, 21, .06), 0 1px 1px rgba(32, 21, 21, .04);
+  --shadow-md: 0 4px 12px rgba(32, 21, 21, .08), 0 1px 2px rgba(32, 21, 21, .05);
+  --shadow-lg: 0 12px 32px rgba(32, 21, 21, .12), 0 2px 6px rgba(32, 21, 21, .06);
+
+  --fleet-font: "Inter", "Segoe UI Variable", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  &.dark {
+    @media screen {
+      --primary-l: 70%;
+      --fleet-brand: #ff6a26;
+      --fleet-quiet: hsl(30, 7%, 12%);
+      --grey-50: hsl(30, 8%, 7%);
+      --grey-100-hsl: 30, 7%, 9%;
+      --grey-100: hsl(var(--grey-100-hsl));
+      --grey-200: hsl(30, 6%, 16%);
+      --grey-300: hsl(30, 5%, 24%);
+      --grey-400: hsl(30, 4%, 42%);
+      --grey-500-hsl: 30, 5%, 60%;
+      --grey-500: hsl(var(--grey-500-hsl));
+      --grey-600: hsl(30, 7%, 72%);
+      --grey-700: hsl(30, 9%, 82%);
+      --grey-800: hsl(30, 12%, 90%);
+      --grey-900: hsl(30, 18%, 95%);
+      --site-background: hsl(30, 8%, 6%);
+      --text: hsl(30, 9%, 82%);
+      --text-strong: hsl(30, 18%, 95%);
+      --text-light: hsl(30, 5%, 62%);
+      --text-muted: hsl(30, 5%, 62%);
+      --border: hsl(30, 6%, 17%);
+      --border-light: hsl(30, 6%, 13%);
+      --shadow-sm: none;
+      --shadow-md: 0 4px 16px rgba(0, 0, 0, .4);
+      --shadow-lg: 0 12px 32px rgba(0, 0, 0, .5);
+    }
+  }
+}
+
+// Type: one modern sans for everything (Vikunja uses Quicksand for headings and Open Sans for text).
+html, body, button, input, select, textarea, .title, .subtitle, h1, h2, h3, h4, h5, h6, .menu, .menu-list {
+  font-family: var(--fleet-font) !important;
+  -webkit-font-smoothing: antialiased;
+}
+.title, h1, h2, h3 { letter-spacing: -.02em; font-weight: 700; color: var(--text-strong); }
+h1.title, .title.is-1, .title.is-2 { font-weight: 750; }
+body { font-size: 15px; line-height: 1.5; }
+
+// Surfaces: cards and boxes are white panels with a hairline border and a soft shadow, larger radius.
+.box, .card, .task-view .details .box, .modal-card, .dropdown-content, .popup {
+  border-radius: var(--fleet-radius-lg) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+.card-header { box-shadow: none !important; border-bottom: 1px solid var(--border); }
+
+// Controls.
+.button, .input, .textarea, .select select, .tag, .multiselect .control {
+  border-radius: var(--fleet-radius) !important;
+}
+.button { font-weight: 600; box-shadow: none !important; transition: background-color .12s ease, border-color .12s ease; }
+.button.is-primary { background: var(--primary) !important; border-color: var(--primary) !important; }
+.button.is-primary:hover { filter: brightness(.95); }
+.input, .textarea, .select select { border-color: var(--border) !important; box-shadow: none !important; }
+.input:focus, .textarea:focus, .select select:focus { border-color: var(--primary) !important; box-shadow: 0 0 0 3px hsla(var(--primary-h), var(--primary-s), var(--primary-l), .18) !important; }
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+// Sidebar: calm, warm, the active item a quiet block instead of a coloured bar.
+.menu-container {
+  background: var(--site-background) !important;
+  border-inline-end: 1px solid var(--border);
+}
+.menu .menu-list a, .menu .menu-list .list-menu-link {
+  border-radius: 8px;
+  margin: 1px 6px;
+  padding-inline: .6rem;
+  color: var(--text) !important;
+}
+.menu .menu-list a:hover, .menu .menu-list li > div:hover { background: var(--fleet-quiet) !important; }
+.menu .menu-list a.router-link-exact-active, .menu .menu-list a.router-link-active {
+  background: var(--fleet-quiet) !important;
+  color: var(--text-strong) !important;
+  font-weight: 650;
+  box-shadow: none !important;
+}
+.menu .menu-list li > div { border-radius: 8px; margin: 0 6px; }
+.menu-label { text-transform: uppercase; letter-spacing: .09em; font-size: .72rem; color: var(--text-light); }
+
+// Header: light, with a hairline instead of a shadow.
+.navbar.main-theme, header.navbar {
+  background: var(--site-background) !important;
+  box-shadow: none !important;
+  border-block-end: 1px solid var(--border);
+}
+
+// Tables and lists: header row in muted small caps, light row separators, hover row.
+.table { background: transparent; }
+.table thead th { font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; color: var(--text-light) !important; font-weight: 600; border-bottom-color: var(--border) !important; }
+.table td { border-bottom-color: var(--border-light) !important; }
+.table tbody tr:hover { background: var(--fleet-quiet); }
+.tasks .task, .single-task { border-radius: 8px; }
+.tasks .task:hover, .single-task:hover { background: var(--fleet-quiet) !important; }
+
+// Kanban: rounded columns and cards.
+.kanban .bucket { border-radius: var(--fleet-radius-lg); background: var(--grey-100) !important; }
+.kanban .bucket .task { border-radius: var(--fleet-radius); box-shadow: var(--shadow-xs) !important; border: 1px solid var(--border); }
+
+// Content width and breathing room.
+.app-content { padding-block-start: 1.5rem; }
+.content-widescreen { max-width: 1320px; }
+
+// Buttons in sentence case (Vikunja's Button.vue sets uppercase), and the task page's long column of actions as quiet
+// list rows (Azure-style command list) instead of a stack of shouting buttons.
+.button { text-transform: none !important; letter-spacing: 0 !important; }
+.action-buttons .button {
+  justify-content: flex-start !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  color: var(--text) !important;
+  font-weight: 500 !important;
+  min-height: 2.1rem;
+}
+.action-buttons .button:hover { background: var(--fleet-quiet) !important; }
+.action-buttons .button.button--mark-done {
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: #fff !important;
+  font-weight: 650 !important;
+  justify-content: center !important;
+  margin-block-end: .5rem;
+}
+.action-buttons .button.is-danger, .action-buttons .button.is-danger.is-primary { background: transparent !important; border-color: transparent !important; color: var(--danger) !important; font-weight: 600 !important; }
+.action-buttons .button.is-danger:hover { background: hsla(var(--danger-h), var(--danger-s), var(--danger-l), .08) !important; }
+.action-heading, .action-buttons .heading { text-transform: uppercase; letter-spacing: .08em; font-size: .7rem; color: var(--text-light); margin-block-start: .6rem; }
