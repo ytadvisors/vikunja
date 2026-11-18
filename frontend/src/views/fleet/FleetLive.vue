@@ -1,9 +1,11 @@
 <template>
-	<div class="page">
+	<div class="fleet-page">
 		<p class="crumb"><RouterLink :to="{name: 'fleet.home'}">Fleet</RouterLink> / Live monitoring</p>
-		<header class="head">
-			<h1><span class="h-icon" style="--c:#e03e3e">◉</span>Live monitoring</h1>
-			<p class="sub">Watch the whole system, or pick one device. Everything the hub records appears as it happens, and each event links to its task.</p>
+		<header class="page-head">
+			<div>
+				<h1><span class="h-icon" style="--c:#e03e3e">◉</span>Live monitoring</h1>
+				<p class="sub">Watch the whole system, or pick one device. Everything the hub records appears as it happens, and each event links to its task.</p>
+			</div>
 		</header>
 
 		<div class="picker">
@@ -41,7 +43,7 @@
 			<div v-if="current.risks.length" class="risks"><b>Worth checking</b><div v-for="(r, i) in current.risks" :key="i" class="risk">{{ r }}</div></div>
 		</section>
 
-		<div class="bar">
+		<div class="toolbar">
 			<select v-model="source" aria-label="Source"><option value="">All levels</option><option value="ok">Success</option><option value="error">Errors</option><option value="warn">Warnings</option></select>
 			<input v-model="q" type="search" placeholder="Filter by device, event or task number" aria-label="Filter events">
 			<button type="button" :class="['live', {on: live}]" @click="toggleLive"><i />{{ live ? 'Live' : 'Paused' }}</button>
@@ -165,14 +167,6 @@ onUnmounted(() => stop())
 </script>
 
 <style lang="scss" scoped>
-.page { max-width: 1240px; margin: 0 auto; padding: .5rem .5rem 4rem; color: var(--text); }
-.crumb { color: var(--text-light); font-size: .85rem; margin: 0 0 .2rem; }
-.head h1 { display: flex; align-items: center; gap: .6rem; font-size: 2rem; font-weight: 700; letter-spacing: -.02em; margin: 0; color: var(--text-strong); }
-.sub { color: var(--text-light); margin: .2rem 0 1.2rem; }
-.h-icon { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 8px; color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); font-size: 1rem; }
-.bar { display: flex; gap: .5rem; align-items: center; margin-bottom: .8rem; flex-wrap: wrap; }
-.bar input, .bar select { border: 1px solid var(--border); border-radius: 8px; padding: .42rem .7rem; font: inherit; font-size: .9rem; background: var(--white); color: var(--text-strong); }
-.bar input { flex: 1; min-width: 240px; }
 .live { display: inline-flex; align-items: center; gap: .4rem; border: 1px solid var(--border); background: var(--white); border-radius: 8px; padding: .42rem .8rem; font: inherit; font-size: .9rem; cursor: pointer; color: var(--text-light); }
 .live i { width: 8px; height: 8px; border-radius: 50%; background: #9b9a97; }
 .live.on { color: var(--text-strong); font-weight: 600; }
@@ -186,25 +180,18 @@ onUnmounted(() => stop())
 .e { fill: #f0a49b; background: #f0a49b; }
 .bars { width: 100%; height: 110px; display: block; }
 .axis { display: flex; justify-content: space-between; font-size: .72rem; color: var(--text-light); }
-.ntable { width: 100%; border-collapse: collapse; font-size: .86rem; }
-.ntable th { text-align: left; font-weight: 500; font-size: .78rem; color: var(--text-light); padding: .45rem .5rem; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--white); }
-.ntable td { padding: .45rem .5rem; border-bottom: 1px solid var(--border-light); vertical-align: top; }
 .ntable tr.fresh { animation: flash 2s ease-out; }
 @keyframes flash { from { background: rgba(35, 131, 226, .12); } to { background: transparent; } }
-.mono { font-family: ui-monospace, Menlo, monospace; font-size: .78rem; white-space: nowrap; }
 .mono.muted { white-space: normal; word-break: break-word; }
-.muted { color: var(--text-light); }
 .src { font-weight: 600; color: var(--text-strong); }
 .lv { font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; border-radius: 4px; padding: .05rem .4rem; background: #e3e2e0; color: #32302c; }
 .lv.ok { background: #dbeddb; color: #1c3829; }
 .lv.warn { background: #fdecc8; color: #402c1b; }
 .lv.error { background: #ffe2dd; color: #5d1715; }
 .lv.info { background: #d3e5ef; color: #183347; }
-.empty { text-align: center; color: var(--text-light); padding: 2.4rem 1rem; }
-.empty b { display: block; color: var(--text-strong); }
 .picker { margin-bottom: .9rem; }
 .picker select { border: 1px solid var(--border); border-radius: 8px; padding: .5rem .8rem; font: inherit; font-size: .95rem; font-weight: 500; background: var(--white); color: var(--text-strong); min-width: 320px; }
-.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: .6rem; margin-bottom: 1rem; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: .6rem; margin-bottom: 1rem; }
 .tile { border: 1px solid var(--border); border-radius: 10px; padding: .65rem .8rem; display: flex; flex-direction: column; gap: .1rem; }
 .tile span { font-size: .76rem; color: var(--text-light); }
 .tile b { font-size: 1.15rem; color: var(--text-strong); font-weight: 600; }
@@ -220,10 +207,6 @@ onUnmounted(() => stop())
 .devcard dl { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: .5rem; margin: .8rem 0; }
 .devcard dt { font-size: .74rem; color: var(--text-light); }
 .devcard dd { margin: 0; font-size: .88rem; color: var(--text-strong); }
-.pill { display: inline-flex; align-items: center; gap: .3rem; font-size: .76rem; border-radius: 999px; padding: .1rem .55rem; }
-.pill i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-.pill.ok { background: #dbeddb; color: #1c3829; }
-.pill.bad { background: #ffe2dd; color: #5d1715; }
 .strip { display: grid; grid-template-columns: repeat(144, 1fr); gap: 1px; height: 26px; }
 .strip i { border-radius: 1px; }
 .strip .up { background: #6fb38a; }

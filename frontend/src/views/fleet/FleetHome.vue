@@ -1,5 +1,5 @@
 <template>
-	<div class="fleet">
+	<div class="fleet-page fleet-home">
 		<section class="ask">
 			<div class="ask-icon" aria-hidden="true">
 				<svg viewBox="0 0 48 48" width="40" height="40"><circle cx="24" cy="24" r="22" fill="#fff" stroke="#e9e9e7" /><path d="M14 30a10 10 0 0 1 20 0" fill="none" stroke="#37352f" stroke-width="2.5" stroke-linecap="round" /><path d="M24 30l6-8" stroke="#e16b16" stroke-width="3" stroke-linecap="round" /><circle cx="24" cy="30" r="2.6" fill="#37352f" /></svg>
@@ -44,7 +44,7 @@
 			</div>
 			<div class="list">
 				<h3>Missions<span class="badge">{{ missions.length }}</span></h3>
-				<div v-if="!loading && !missions.length" class="empty ghost">Describe an outcome above</div>
+				<div v-if="!loading && !missions.length" class="empty placeholder">Describe an outcome above</div>
 				<RouterLink v-for="m in missions.slice(0, 5)" :key="m.id" class="li" :to="{name: 'fleet.mission', params: {id: m.id}}">
 					<span :class="['li-icon', m.state.cls]">▦</span>
 					<span class="li-name">{{ m.title }}</span>
@@ -219,7 +219,6 @@ onUnmounted(() => stop())
 
 <style lang="scss" scoped>
 // Notion direction: white page, centred ask box with a soft shadow, colourful small icons, quiet tables, soft status pills.
-.fleet { max-width: 1080px; margin: 0 auto; padding: 1rem .5rem 4rem; color: var(--text); }
 .ask { text-align: center; padding: 1.5rem 0 1rem; }
 .ask-icon { display: flex; justify-content: center; margin-bottom: .6rem; }
 .ask h1 { font-size: 2rem; font-weight: 700; letter-spacing: -.02em; color: var(--text-strong); margin: 0 0 1.4rem; }
@@ -242,48 +241,33 @@ onUnmounted(() => stop())
 .quick a { color: var(--text-light); }
 .quick a:hover { color: var(--text-strong); }
 .err { color: var(--danger); text-align: center; }
-.muted { color: var(--text-light); }
 .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: .6rem; margin: 2rem 0 1.6rem; }
 .kpi { display: flex; gap: .75rem; align-items: center; padding: .8rem .9rem; border-radius: 10px; background: var(--fleet-sidebar, #f7f6f3); }
 .kpi b { display: block; font-size: 1.35rem; font-weight: 700; color: var(--text-strong); line-height: 1.2; }
 .kpi b.bad { color: #e03e3e; }
 .kpi small, .row small, td small { display: block; color: var(--text-light); font-size: .8rem; }
 .k-icon, .h-icon { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); font-size: .95rem; flex: none; }
-.h-icon { width: 24px; height: 24px; font-size: .8rem; border-radius: 6px; margin-inline-end: .55rem; }
 .block { margin-bottom: 1.8rem; }
 .block h2 { display: flex; align-items: center; font-size: 1.15rem; font-weight: 700; color: var(--text-strong); margin: 0 0 .5rem; }
-.ntable { width: 100%; border-collapse: collapse; font-size: .92rem; }
-.ntable th { text-align: left; font-weight: 500; font-size: .82rem; color: var(--text-light); padding: .45rem .5rem; border-bottom: 1px solid var(--border); }
-.ntable td { padding: .55rem .5rem; border-bottom: 1px solid var(--border-light); vertical-align: middle; }
-.ntable tbody tr { cursor: pointer; }
-.ntable tbody tr:hover { background: var(--fleet-quiet); }
 .name { font-weight: 500; color: var(--text-strong); }
 .doc { color: var(--text-light); margin-inline-end: .45rem; }
 .bar { height: 5px; border-radius: 999px; background: var(--border); overflow: hidden; width: 140px; }
 .bar i { display: block; height: 100%; background: #2383e2; }
-.pill { display: inline-flex; align-items: center; gap: .35rem; font-size: .8rem; font-weight: 500; border-radius: 999px; padding: .1rem .55rem; white-space: nowrap; }
-.pill i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-.pill.ok { background: #dbeddb; color: #1c3829; }
 .pill.ok i { background: #448361; }
-.pill.info { background: #d3e5ef; color: #183347; }
 .pill.info i { background: #2383e2; }
-.pill.warn { background: #fdecc8; color: #402c1b; }
 .pill.warn i { background: #cb912f; }
-.pill.bad { background: #ffe2dd; color: #5d1715; }
 .pill.bad i { background: #e03e3e; }
 .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem; }
 @media (max-width: 860px) { .cols { grid-template-columns: 1fr; } }
 .row { display: flex; justify-content: space-between; gap: 1rem; padding: .6rem .3rem; border-bottom: 1px solid var(--border-light); }
 .row b { color: var(--text-strong); font-weight: 600; }
 .right { text-align: right; flex: none; }
-.empty { color: var(--text-light); padding: .8rem .3rem; }
 
 // Cloudflare direction (Yomi 2026-11-18: "the dashboard for cloudflare ... with the computers like the domains" and "charts here too")
 .lists { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem; margin: 2.2rem 0 1.8rem; text-align: left; }
 @media (max-width: 900px) { .lists { grid-template-columns: 1fr; } }
 .list h3 { display: flex; align-items: center; gap: .4rem; font-size: .85rem; font-weight: 600; color: var(--text-light); margin: 0 0 .3rem; padding-bottom: .4rem; border-bottom: 1px solid var(--border); }
 .list h3 a { color: var(--text-light); }
-.badge { font-size: .72rem; font-weight: 600; background: var(--fleet-quiet); color: var(--text-light); border-radius: 999px; padding: 0 .45rem; }
 .li { display: flex; align-items: center; gap: .55rem; padding: .62rem .1rem; border-bottom: 1px solid var(--border-light); color: var(--text-strong); font-size: .9rem; }
 .li:hover:not(.static) { background: var(--fleet-quiet); }
 .li-icon { width: 20px; text-align: center; color: var(--text-light); font-size: .85rem; }
@@ -293,7 +277,7 @@ onUnmounted(() => stop())
 .li-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .li-meta { color: var(--text-light); font-size: .78rem; white-space: nowrap; }
 .chev { color: var(--text-light); }
-.ghost { background: var(--fleet-sidebar, #f7f6f3); border-radius: 8px; text-align: center; margin-top: .5rem; }
+.placeholder { background: var(--fleet-sidebar, #f7f6f3); border-radius: 8px; text-align: center; margin-top: .5rem; }
 .recs { margin-bottom: 1.8rem; }
 .recs h2, .analytics h2, .block h2 { font-size: 1.1rem; font-weight: 700; color: var(--text-strong); margin: 0 0 .6rem; display: flex; align-items: center; gap: .5rem; }
 .rec { display: flex; align-items: baseline; gap: .7rem; padding: .55rem .1rem; border-bottom: 1px solid var(--border-light); flex-wrap: wrap; }

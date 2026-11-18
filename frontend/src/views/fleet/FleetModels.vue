@@ -1,9 +1,11 @@
 <template>
-	<div class="page">
+	<div class="fleet-page">
 		<p class="crumb"><RouterLink :to="{name: 'fleet.home'}">Fleet</RouterLink> / Models</p>
-		<header class="head">
-			<h1><span class="h-icon" style="--c:#9065b0">✦</span>Models</h1>
-			<p class="sub">Open models that run on your own computers, at no per-use cost. Choose one for a computer; the list shows which computers have the memory for it.</p>
+		<header class="page-head">
+			<div>
+				<h1><span class="h-icon" style="--c:#9065b0">✦</span>Models</h1>
+				<p class="sub">Open models that run on your own computers, at no per-use cost. Choose one for a computer; the list shows which computers have the memory for it.</p>
+			</div>
 		</header>
 
 		<div class="devs" role="tablist" aria-label="Choose a computer">
@@ -164,11 +166,6 @@ onUnmounted(() => stop())
 </script>
 
 <style lang="scss" scoped>
-.page { max-width: 1040px; margin: 0 auto; padding: .5rem .5rem 4rem; color: var(--text); }
-.crumb { color: var(--text-light); font-size: .85rem; margin: 0 0 .2rem; }
-.head h1 { display: flex; align-items: center; gap: .6rem; font-size: 2rem; font-weight: 700; letter-spacing: -.02em; margin: 0; color: var(--text-strong); }
-.sub { color: var(--text-light); margin: .2rem 0 1rem; }
-.h-icon { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 8px; color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); font-size: 1rem; }
 .hero { text-align: center; padding: 1.4rem 0 .4rem; }
 .hero h2 { font-size: 1.6rem; font-weight: 600; color: var(--text-strong); margin: 0 0 .9rem; letter-spacing: -.01em; }
 .ask { max-width: 620px; margin: 0 auto; border: 1.5px solid #9065b0; border-radius: 12px; padding: .7rem .9rem 1.6rem; text-align: left; background: var(--white); box-shadow: 0 2px 10px rgba(144, 101, 176, .1); }
@@ -207,20 +204,9 @@ onUnmounted(() => stop())
 .mm b { font-size: .86rem; color: var(--text-strong); }
 .mm small { font-size: .72rem; color: var(--text-light); }
 .mk { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 7px; font-weight: 700; color: #37352f; flex: none; }
-.muted { color: var(--text-light); }
 .sm { font-size: .78rem; }
-.pill { display: inline-flex; align-items: center; gap: .3rem; font-size: .74rem; border-radius: 999px; padding: .05rem .5rem; }
-.pill i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-.pill.ok { background: #dbeddb; color: #1c3829; }
-.pill.warn { background: #fdecc8; color: #402c1b; }
-.primary { border: 0; border-radius: 6px; padding: .3rem .8rem; font: inherit; font-size: .84rem; font-weight: 500; background: #2383e2; color: #fff; cursor: pointer; }
-.primary.sm { padding: .2rem .65rem; }
-.primary:disabled, .ghost:disabled { opacity: .45; cursor: default; }
-.ghost { border: 1px solid var(--border); background: var(--white); border-radius: 6px; padding: .22rem .65rem; font: inherit; font-size: .82rem; cursor: pointer; color: var(--text-strong); }
 .ok-msg { margin: .6rem 0 0; font-size: .84rem; color: #1c3829; }
-.notice { background: #ffe2dd; color: #5d1715; border-radius: 8px; padding: .5rem .8rem; }
 .foot { color: var(--text-light); font-size: .78rem; margin-top: 1.4rem; }
-.empty { color: var(--text-light); }
 @media (max-width: 760px) { .chips { grid-template-columns: repeat(2, 1fr); } }
 .devs { display: flex; gap: .5rem; flex-wrap: wrap; margin: .4rem 0 .2rem; }
 .dev { display: flex; align-items: center; gap: .55rem; text-align: left; border: 1px solid var(--border); border-radius: 10px; padding: .5rem .75rem; background: var(--white); cursor: pointer; font: inherit; color: var(--text); }

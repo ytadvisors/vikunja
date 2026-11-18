@@ -1,9 +1,9 @@
 <template>
-	<div class="mission-page">
+	<div class="fleet-page">
 		<p class="crumb"><RouterLink :to="{name: 'fleet.home'}">Fleet</RouterLink> / Mission #{{ id }}</p>
 		<div v-if="error" class="notice">{{ error }}</div>
 		<template v-else-if="task">
-			<header class="m-head">
+			<header class="page-head">
 				<div>
 					<h1>{{ title }}</h1>
 					<p class="sub">Asked by {{ task.created_by?.username }} · {{ ago(task.created) }}<template v-if="briefing?.general"> · general: {{ briefing.general }}</template></p>
@@ -19,9 +19,9 @@
 				<li v-for="s in steps" :key="s.label" :class="s.state"><span class="n">{{ s.state === 'done' ? '✓' : s.i }}</span><div><b>{{ s.label }}</b><small>{{ s.note }}</small></div></li>
 			</ol>
 
-			<section v-if="stopped" class="panel stop"><h2>Stopped</h2><p class="body">{{ stopped }}</p></section>
+			<section v-if="stopped" class="card stop"><h2>Stopped</h2><p class="body">{{ stopped }}</p></section>
 
-			<section v-if="briefing" class="panel">
+			<section v-if="briefing" class="card">
 				<h2>Briefing <span class="by">from the general · {{ briefing.general }} · {{ briefing.model }} · {{ briefing.seconds }} s</span></h2>
 				<div class="body">
 					<p class="lead">{{ briefing.text }}</p>
@@ -33,9 +33,9 @@
 					</dl>
 				</div>
 			</section>
-			<section v-else-if="!stopped" class="panel"><h2>Briefing</h2><p class="body waiting">The general is writing the briefing…</p></section>
+			<section v-else-if="!stopped" class="card"><h2>Briefing</h2><p class="body waiting">The general is writing the briefing…</p></section>
 
-			<section v-if="jobs.length" class="panel">
+			<section v-if="jobs.length" class="card">
 				<h2>Jobs <span class="by">{{ doneJobs }} of {{ jobs.length }} done on the fleet's computers</span></h2>
 				<div class="jobs">
 					<article v-for="j in jobs" :key="j.id" class="job">
@@ -54,7 +54,7 @@
 				</div>
 			</section>
 
-			<section v-if="debrief" class="panel debrief">
+			<section v-if="debrief" class="card debrief">
 				<h2>Debrief <span class="by">reviewed by the general from the job results</span><span v-if="debrief.incomplete" class="pill warn">incomplete: {{ debrief.incomplete }}</span></h2>
 				<div class="body">
 					<pre class="answer">{{ debrief.answer }}</pre>
@@ -145,14 +145,6 @@ onUnmounted(() => stop())
 </script>
 
 <style lang="scss" scoped>
-.mission-page { max-width: 1100px; margin: 0 auto; padding: .5rem .25rem 3rem; }
-.crumb { color: var(--text-light); font-size: .85rem; margin: 0 0 .25rem; }
-.m-head { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; margin-bottom: 1.1rem; }
-.m-head h1 { font-size: 1.85rem; font-weight: 750; letter-spacing: -.025em; margin: 0; color: var(--text-strong); max-width: 760px; }
-.sub, .c-meta { color: var(--text-light); margin: .2rem 0 0; font-size: .9rem; }
-.actions { margin-inline-start: auto; display: flex; gap: .6rem; align-items: center; }
-.primary { background: var(--primary); color: #fff; border: 0; border-radius: 10px; padding: .55rem .95rem; font-weight: 700; cursor: pointer; }
-.ghost { border: 1px solid var(--border); border-radius: 10px; padding: .5rem .9rem; color: var(--text); font-weight: 600; background: var(--white); }
 .steps { list-style: none; display: grid; grid-template-columns: repeat(5, 1fr); gap: .5rem; padding: 0; margin: 0 0 1.1rem; }
 @media (max-width: 760px) { .steps { grid-template-columns: 1fr 1fr; } }
 .steps li { display: flex; gap: .55rem; align-items: center; background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: .6rem .7rem; }
@@ -162,8 +154,6 @@ onUnmounted(() => stop())
 .steps li.done .n { background: #448361; color: #fff; }
 .steps li.active { border-color: var(--primary); box-shadow: 0 0 0 3px hsla(var(--primary-h), var(--primary-s), var(--primary-l), .12); }
 .steps li.active .n { background: var(--primary); color: #fff; }
-.panel { background: var(--white); border: 1px solid var(--border); border-radius: 12px; box-shadow: none; margin-bottom: 1.1rem; overflow: hidden; }
-.panel h2 { font-size: 1rem; font-weight: 700; margin: 0; padding: .85rem 1.1rem; border-bottom: 1px solid var(--border); display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; }
 .by { color: var(--text-light); font-weight: 500; font-size: .82rem; }
 .body { padding: 1rem 1.1rem; }
 .lead { font-size: 1.02rem; line-height: 1.55; margin: 0 0 .8rem; color: var(--text-strong); }
@@ -186,10 +176,6 @@ pre { white-space: pre-wrap; word-break: break-word; font-size: .8rem; backgroun
 .untrusted { margin-top: .8rem; background: hsla(var(--warning-h), var(--warning-s), var(--warning-l), .08); border-radius: 10px; padding: .7rem .9rem; }
 .untrusted ul { margin: .4rem 0 0 1.1rem; }
 .untrusted li { margin: .25rem 0; font-size: .88rem; }
-.pill { display: inline-flex; align-items: center; gap: .35rem; font-size: .8rem; font-weight: 500; border-radius: 999px; padding: .1rem .55rem; white-space: nowrap; }
-.pill.ok { background: #dbeddb; color: #1c3829; }
-.pill.info { background: #d3e5ef; color: #183347; }
-.pill.warn { background: #fdecc8; color: #402c1b; }
-.notice { color: var(--text-light); background: var(--fleet-quiet, #f6f3ee); border-radius: 10px; padding: .7rem 1rem; margin-bottom: 1rem; }
 .stop h2 { color: var(--danger); }
+.c-meta { color: var(--text-light); margin: .2rem 0 0; font-size: .9rem; }
 </style>
