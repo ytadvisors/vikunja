@@ -23,12 +23,10 @@
 				class="content"
 			>
 				<div>
-					<h2
-						v-if="title"
-						class="title"
-					>
-						{{ title }}
-					</h2>
+					<h1 class="fleet-auth-head">
+						<b>Your fleet, one HQ.</b>
+						<span v-if="title">{{ title === 'Login' ? 'Log in to Fleet HQ' : title }}</span>
+					</h1>
 					<ApiConfig v-if="shouldShowApiConfig" />
 					<Message
 						v-if="motd !== ''"

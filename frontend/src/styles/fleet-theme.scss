@@ -205,3 +205,29 @@ body { font-size: 15px; line-height: 1.5; }
   background: linear-gradient(160deg, #001f3f 0%, #0b2f57 55%, #1d4a7a 100%) !important;
 }
 .llama-cool { display: none !important; }
+
+// Login and the other signed-out pages, after Notion's login (Yomi 2026-11-18: "I like notion login"): a white page, one narrow
+// centred column, the mark, a two-line heading, full-width fields and one blue action, small grey fine print. No photo.
+.no-auth-wrapper { padding-block-start: 6vh !important; }
+.no-auth-wrapper > .logo { width: 150px !important; height: auto !important; margin-block-end: 1.4rem; color: var(--text-strong); }
+.no-auth-wrapper .noauth-container {
+  display: block !important;
+  max-width: 360px !important;
+  width: 100%;
+  box-shadow: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  min-height: 0 !important;
+}
+.no-auth-wrapper .image { display: none !important; }
+.no-auth-wrapper .content { padding: 0 !important; width: 100% !important; background: transparent !important; }
+.fleet-auth-head { text-align: center; margin: 0 0 1.4rem; line-height: 1.25; }
+.fleet-auth-head b { display: block; font-size: 1.45rem; font-weight: 700; color: var(--text-strong); letter-spacing: -.01em; }
+.fleet-auth-head span { display: block; font-size: 1.45rem; font-weight: 600; color: var(--text-light); letter-spacing: -.01em; }
+.no-auth-wrapper .label { font-size: .78rem; font-weight: 500; color: var(--text-light); }
+.no-auth-wrapper .input { border-radius: 8px !important; min-height: 2.4rem; box-shadow: 0 0 0 1px var(--border) inset !important; border: 0 !important; }
+.no-auth-wrapper .input:focus { box-shadow: 0 0 0 2px var(--primary) inset !important; }
+.no-auth-wrapper .button { width: 100%; justify-content: center; border-radius: 8px !important; min-height: 2.4rem; font-weight: 600 !important; }
+.no-auth-wrapper .button.is-primary, .no-auth-wrapper form .button:not(.is-outlined):not(.is-text) { background: #2383e2 !important; color: #fff !important; }
+.no-auth-wrapper .api-config { text-align: center; font-size: .78rem; color: var(--text-light); margin-block-end: 1rem; }
+.no-auth-wrapper .legal-links, .no-auth-wrapper footer, .no-auth-wrapper .content > div:last-child { text-align: center; font-size: .75rem; color: var(--text-light); }
