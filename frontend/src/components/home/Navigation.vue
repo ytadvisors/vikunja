@@ -18,81 +18,21 @@
 					height="48"
 				/>
 			</RouterLink>
+			<p class="menu-label fleet-group">Fleet</p>
+			<menu class="menu-list other-menu-items">
+				<li><RouterLink :to="{ name: 'fleet.home'}"><span class="menu-item-icon icon"><Icon icon="tachometer-alt" /></span>Fleet</RouterLink></li>
+				<li><RouterLink :to="{ name: 'fleet.devices'}"><span class="menu-item-icon icon"><Icon icon="sitemap" /></span>Devices</RouterLink></li>
+				<li><RouterLink :to="{ name: 'fleet.models'}"><span class="menu-item-icon icon"><Icon icon="layer-group" /></span>Models</RouterLink></li>
+				<li><RouterLink :to="{ name: 'fleet.live'}"><span class="menu-item-icon icon"><Icon icon="bolt" /></span>Live monitoring</RouterLink></li>
+			</menu>
+			<p class="menu-label fleet-group">Work</p>
 			<menu class="menu-list other-menu-items">
 				<li>
-					<RouterLink :to="{ name: 'fleet.home'}">
-						<span class="menu-item-icon icon">
-							<Icon icon="tachometer-alt" />
-						</span>
-						Fleet
-					</RouterLink>
-				</li>
-				<li>
-					<RouterLink :to="{ name: 'fleet.devices'}">
-						<span class="menu-item-icon icon">
-							<Icon icon="sitemap" />
-						</span>
-						Devices
-					</RouterLink>
-				</li>
-				<li>
-					<RouterLink :to="{ name: 'fleet.models'}">
-						<span class="menu-item-icon icon">
-							<Icon icon="layer-group" />
-						</span>
-						Models
-					</RouterLink>
-				</li>
-				<li>
-					<RouterLink :to="{ name: 'fleet.live'}">
-						<span class="menu-item-icon icon">
-							<Icon icon="bolt" />
-						</span>
-						Live monitoring
-					</RouterLink>
-				</li>
-				<li>
 					<RouterLink
-						v-shortcut="SHORTCUTS.navigation.overview"
 						:to="{ name: 'fleet.overview'}"
+						:class="{'router-link-active': isWork}"
 					>
-						<span class="menu-item-icon icon">
-							<Icon icon="calendar" />
-						</span>
-						{{ $t('navigation.overview') }}
-					</RouterLink>
-				</li>
-				<li>
-					<RouterLink
-						v-shortcut="SHORTCUTS.navigation.upcoming"
-						:to="{ name: 'tasks.range'}"
-					>
-						<span class="menu-item-icon icon">
-							<Icon :icon="['far', 'calendar-alt']" />
-						</span>
-						{{ $t('navigation.upcoming') }}
-					</RouterLink>
-				</li>
-				<li>
-					<RouterLink
-						v-shortcut="SHORTCUTS.navigation.projects"
-						:to="{ name: 'projects.index'}"
-					>
-						<span class="menu-item-icon icon">
-							<Icon icon="layer-group" />
-						</span>
-						{{ $t('project.projects') }}
-					</RouterLink>
-				</li>
-				<li>
-					<RouterLink
-						v-shortcut="SHORTCUTS.navigation.labels"
-						:to="{ name: 'labels.index'}"
-					>
-						<span class="menu-item-icon icon">
-							<Icon icon="tags" />
-						</span>
-						{{ $t('label.title') }}
+						<span class="menu-item-icon icon"><Icon icon="calendar" /></span>Tasks
 					</RouterLink>
 				</li>
 				<li>
@@ -100,26 +40,12 @@
 						v-shortcut="SHORTCUTS.navigation.teams"
 						:to="{ name: 'teams.index'}"
 					>
-						<span class="menu-item-icon icon">
-							<Icon icon="users" />
-						</span>
-						{{ $t('team.title') }}
+						<span class="menu-item-icon icon"><Icon icon="users" /></span>{{ $t('team.title') }}
 					</RouterLink>
 				</li>
 				<li v-if="timeTrackingEnabled">
 					<RouterLink :to="{ name: 'time-tracking'}">
-						<span class="menu-item-icon icon">
-							<Icon :icon="['far', 'clock']" />
-						</span>
-						{{ $t('timeTracking.title') }}
-					</RouterLink>
-				</li>
-				<li>
-					<RouterLink :to="{ name: 'trash'}">
-						<span class="menu-item-icon icon">
-							<Icon icon="trash-alt" />
-						</span>
-						{{ $t('trash.title') }}
+						<span class="menu-item-icon icon"><Icon :icon="['far', 'clock']" /></span>{{ $t('timeTracking.title') }}
 					</RouterLink>
 				</li>
 			</menu>
@@ -182,6 +108,7 @@
 
 <script setup lang="ts">
 import {computed} from 'vue'
+import {useRoute} from 'vue-router'
 
 import {SHORTCUTS} from '@/constants/shortcuts'
 import PoweredByLink from '@/components/home/PoweredByLink.vue'
@@ -196,6 +123,9 @@ import ProjectsNavigation from '@/components/home/ProjectsNavigation.vue'
 import {useSidebarResize} from '@/composables/useSidebarResize'
 
 const baseStore = useBaseStore()
+const route = useRoute()
+// The Tasks entry stays lit on every page behind its tab bar.
+const isWork = computed(() => /^(fleet\.overview|tasks\.range|projects\.index|labels\.index|trash)/.test(String(route.name || '')))
 const projectList = useProjects()
 const configStore = useConfigStore()
 

@@ -7,6 +7,7 @@
 				<p class="sub">{{ salutation ? salutation + '. ' : '' }}Everything assigned to you, across all projects.</p>
 			</div>
 		</header>
+		<WorkTabs />
 
 		<Message
 			v-if="deletionScheduledAt !== null"
@@ -51,6 +52,7 @@
 </template>
 
 <script lang="ts" setup>
+import WorkTabs from '@/components/fleet/WorkTabs.vue'
 import {ref, computed, watch} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 

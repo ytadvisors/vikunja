@@ -18,6 +18,7 @@
 				</XButton>
 			</div>
 		</header>
+		<WorkTabs />
 		<div class="content">
 			<p
 				v-if="labels.length === 0"
@@ -123,6 +124,7 @@
 </template>
 
 <script setup lang="ts">
+import WorkTabs from '@/components/fleet/WorkTabs.vue'
 import {computed, nextTick, ref} from 'vue'
 import {useI18n} from 'vue-i18n'
 

@@ -11,6 +11,7 @@
 				<p class="sub">Where work is organised. Open one to see it as a list, table, timeline or board.</p>
 			</div>
 		</header>
+		<WorkTabs />
 		<div class="toolbar project-header">
 			<FancyCheckbox
 				v-model="showArchived"
@@ -44,6 +45,7 @@
 </template>
 
 <script setup lang="ts">
+import WorkTabs from '@/components/fleet/WorkTabs.vue'
 import {computed} from 'vue'
 import {useI18n} from 'vue-i18n'
 

@@ -1,6 +1,13 @@
 <template>
-	<div class="content is-max-width-desktop">
-		<h1>{{ $t('trash.title') }}</h1>
+	<div class="fleet-page">
+		<p class="crumb"><RouterLink :to="{name: 'fleet.home'}">Fleet</RouterLink> / Trash</p>
+		<header class="page-head">
+			<div>
+				<h1><span class="h-icon" style="--c:#787774">⌫</span>{{ $t('trash.title') }}</h1>
+				<p class="sub">Deleted tasks and projects. Restore them, or empty the trash.</p>
+			</div>
+		</header>
+		<WorkTabs />
 		<div class="trash-header">
 			<SwitchView
 				is="nav"
@@ -29,6 +36,7 @@
 </template>
 
 <script setup lang="ts">
+import WorkTabs from '@/components/fleet/WorkTabs.vue'
 import {useRoute} from 'vue-router'
 import {useI18n} from 'vue-i18n'
 

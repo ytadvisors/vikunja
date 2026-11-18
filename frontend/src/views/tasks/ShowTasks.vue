@@ -17,6 +17,7 @@
 					<p class="sub">{{ pageTitle }}</p>
 				</div>
 			</header>
+			<WorkTabs />
 		</template>
 		<Message
 			v-if="filteredLabels.length > 0"
@@ -120,6 +121,7 @@
 </template>
 
 <script setup lang="ts">
+import WorkTabs from '@/components/fleet/WorkTabs.vue'
 import {computed, ref, watch, watchEffect} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {useI18n} from 'vue-i18n'

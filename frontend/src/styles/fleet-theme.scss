@@ -373,3 +373,32 @@ body { font-size: 15px; line-height: 1.5; }
 .fleet-page .project-card .project-actions { flex: none; }
 .fleet-page .project-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)) !important; inline-size: 100% !important; }
 .fleet-page .project-grid-item { min-inline-size: 0; }
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// One type scale for the whole app (Yomi 2026-11-18: "Most have inconsistent font-sizes and user experiences."). Measured
+// before: up to nine sizes per page (11 to 38 px), body text 13, 14 or 15 px depending on the page, headings forced regular.
+//   page title 28 / 700 · section 18 / 600 · sub-heading 15 / 600 · body 14 / 400 · small 12 / 400-500
+// ---------------------------------------------------------------------------------------------------------------------------
+.app-content { font-size: 14px; }
+.app-content h1, .app-content h1.title, .app-content .title.is-1, .app-content .heading .title, .fleet-page .page-head h1 { font-size: 28px !important; font-weight: 700 !important; line-height: 1.25 !important; letter-spacing: -.02em; }
+.app-content h2, .app-content .title.is-2, .fleet-page .sec, .fleet-page .hero h2, .side-panel > header h2 { font-size: 18px !important; font-weight: 600 !important; line-height: 1.35 !important; }
+.app-content h3, .app-content h4, .app-content .title.is-3, .app-content .title.is-4, .fleet-page .row-h { font-size: 15px !important; font-weight: 600 !important; }
+.app-content .kanban .bucket .title, .app-content .bucket-header .title { font-size: 14px !important; font-weight: 600 !important; }
+.app-content .project-card .project-title { font-size: 14px !important; }
+.app-content p, .app-content li, .app-content td, .app-content .tasktext, .app-content .single-task, .app-content .input, .app-content .textarea, .app-content .select select, .app-content .button, .app-content label { font-size: 14px; }
+.app-content .page-head .sub, .app-content .content .subtitle { font-size: 14px !important; }
+.app-content small, .app-content .is-size-7, .app-content .tag, .app-content .task-project, .app-content .help, .app-content .ntable th, .app-content .table thead th, .app-content .pill, .app-content .badge, .app-content .crumb { font-size: 12px !important; }
+.app-content .single-task .dueDate, .app-content .single-task .priority-label { font-size: 12px !important; }
+
+// Tasks tab bar (shared by My tasks, Upcoming, Projects, Labels, Trash)
+.fleet-page .work-tabs { display: flex; gap: .2rem; border-bottom: 1px solid var(--border); margin: 0 0 1.1rem; }
+.fleet-page .work-tabs a { padding: .55rem .8rem; font-size: 14px; color: var(--text-light); border-bottom: 2px solid transparent; margin-bottom: -1px; text-decoration: none; }
+.fleet-page .work-tabs a:hover { color: var(--text-strong); }
+.fleet-page .work-tabs a.on { color: var(--text-strong); border-bottom-color: var(--text-strong); font-weight: 600; }
+.menu-label.fleet-group { margin: .9rem 0 .25rem; padding: 0 .75rem; font-size: 11px !important; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-light); }
+.fleet-page .ntable td { font-size: 14px; }
+.fleet-page .mono { font-size: 12px; }
+// Sidebar icon colours per group (the menu is now two groups)
+.menu-list.other-menu-items:nth-of-type(2) li:nth-child(1) .menu-item-icon { color: #e03e3e; }  // Tasks
+.menu-list.other-menu-items:nth-of-type(2) li:nth-child(2) .menu-item-icon { color: #d9730d; }  // Teams
+.menu-list.other-menu-items:nth-of-type(2) li:nth-child(3) .menu-item-icon { color: #9065b0; }  // Time tracking

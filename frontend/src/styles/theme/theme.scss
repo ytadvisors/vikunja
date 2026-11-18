@@ -51,7 +51,7 @@ h4,
 h5,
 h6 {
   font-family: $vikunja-font;
-  font-weight: 400 !important;
+  font-weight: 600;  // Fleet HQ: headings are bold (Vikunja forced 400 !important)
 }
 
 // FIXME: these helpers should be mixins
