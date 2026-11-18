@@ -8,7 +8,7 @@
 		<header class="page-head">
 			<div>
 				<h1><span class="h-icon" style="--c:#2383e2">▤</span>Projects</h1>
-				<p class="sub">Where work is organised. Open one to see it as a list, table, timeline or board.</p>
+				<p class="sub">Where work is organised, who works on it, and which computers are doing its tasks.</p>
 			</div>
 		</header>
 		<WorkTabs />
@@ -44,10 +44,7 @@
 			</div>
 		</div>
 
-		<ProjectCardGrid
-			:projects="projects"
-			:show-archived="showArchived"
-		/>
+		<ProjectRows :projects="projects" />
 	</div>
 </template>
 
@@ -57,7 +54,7 @@ import {computed, ref} from 'vue'
 import {useI18n} from 'vue-i18n'
 
 import FancyCheckbox from '@/components/input/FancyCheckbox.vue'
-import ProjectCardGrid from '@/components/project/partials/ProjectCardGrid.vue'
+import ProjectRows from '@/components/fleet/ProjectRows.vue'
 
 import {useTitle} from '@/composables/useTitle'
 import {useStorage} from '@vueuse/core'

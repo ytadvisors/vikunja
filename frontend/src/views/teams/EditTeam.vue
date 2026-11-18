@@ -1,8 +1,27 @@
 <template>
 	<div
-		class="loader-container is-max-width-desktop"
+		class="fleet-page loader-container team-edit"
 		:class="{ 'is-loading': showTeamLoading }"
 	>
+		<p class="crumb"><RouterLink :to="{name: 'teams.index'}">Teams</RouterLink> / {{ team?.name }}</p>
+		<header class="page-head">
+			<div>
+				<h1><span class="h-icon" style="--c:#d9730d">◎</span>{{ team?.name }}</h1>
+				<p class="sub">{{ (team?.members || []).length }} members</p>
+			</div>
+			<div
+				v-if="team && !team.external_id"
+				class="actions"
+			>
+				<XButton
+					variant="secondary"
+					class="is-danger"
+					@click="showLeaveModal = true"
+				>
+					{{ $t('team.edit.leave.title') }}
+				</XButton>
+			</div>
+		</header>
 		<EditTeamForm
 			v-if="team && userIsAdmin && !team.external_id"
 			:key="team.id"
@@ -59,7 +78,7 @@
 				</p>
 			</form>
 			<div class="has-horizontal-overflow">
-				<table class="table has-actions is-striped is-hoverable is-fullwidth">
+				<table class="ntable team-members">
 					<tbody>
 						<tr
 							v-for="m in sortedMembers"
@@ -78,18 +97,7 @@
 								</template>
 							</td>
 							<td class="type">
-								<template v-if="m.admin">
-									<span class="icon is-small">
-										<Icon icon="lock" />
-									</span>
-									{{ $t('team.attributes.admin') }}
-								</template>
-								<template v-else>
-									<span class="icon is-small">
-										<Icon icon="user" />
-									</span>
-									{{ $t('team.attributes.member') }}
-								</template>
+								<span :class="['pill', m.admin ? 'info' : '']"><i />{{ m.admin ? $t('team.attributes.admin') : $t('team.attributes.member') }}</span>
 							</td>
 							<td
 								v-if="userIsAdmin"
@@ -98,7 +106,8 @@
 								<XButton
 									v-if="m.id !== userInfo?.id"
 									:loading="membersLoading"
-									class="mie-2"
+									variant="secondary"
+									class="mie-2 is-small"
 									@click="() => toggleUserType(m)"
 								>
 									{{ m.admin ? $t('team.edit.makeMember') : $t('team.edit.makeAdmin') }}
@@ -106,11 +115,13 @@
 								<XButton
 									v-if="m.id !== userInfo?.id"
 									:loading="membersLoading"
-									danger
-									icon="trash-alt"
+									variant="secondary"
+									class="is-small is-danger"
 									:aria-label="$t('team.edit.deleteUser.header')"
 									@click="() => {memberToDelete = m; showUserDeleteModal = true}"
-								/>
+								>
+									Remove
+								</XButton>
 							</td>
 						</tr>
 					</tbody>
@@ -118,13 +129,6 @@
 			</div>
 		</Card>
 
-		<XButton
-			v-if="team && !team.external_id"
-			class="is-fullwidth is-danger"
-			@click="showLeaveModal = true"
-		>
-			{{ $t('team.edit.leave.title') }}
-		</XButton>
 
 		<!-- Leave team modal -->
 		<Modal

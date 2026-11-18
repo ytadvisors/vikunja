@@ -18,7 +18,7 @@
 				</XButton>
 			</div>
 		</header>
-		<WorkTabs />
+		<WorkTabs embedded />
 		<div class="content">
 			<p
 				v-if="labels.length === 0"

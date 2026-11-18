@@ -1,7 +1,7 @@
 <template>
 	<Card
 		class="is-fullwidth"
-		:title="$t('team.edit.title', {team: team.name})"
+		title="Details"
 	>
 		<form @submit.prevent="save()">
 			<FormField
@@ -37,25 +37,21 @@
 				/>
 			</FormField>
 
-			<div class="field has-addons mbs-4">
-				<div class="control is-fullwidth">
-					<XButton
-						:loading="loading"
-						class="is-fullwidth"
-						type="submit"
-					>
-						{{ $t('misc.save') }}
-					</XButton>
-				</div>
-				<div class="control">
-					<XButton
-						:loading="loading"
-						danger
-						icon="trash-alt"
-						:aria-label="$t('team.edit.delete.header')"
-						@click="emit('delete')"
-					/>
-				</div>
+			<div class="team-form-actions">
+				<XButton
+					:loading="loading"
+					type="submit"
+				>
+					{{ $t('misc.save') }}
+				</XButton>
+				<XButton
+					:loading="loading"
+					variant="secondary"
+					class="is-danger"
+					@click="emit('delete')"
+				>
+					{{ $t('team.edit.delete.header') }}
+				</XButton>
 			</div>
 		</form>
 	</Card>

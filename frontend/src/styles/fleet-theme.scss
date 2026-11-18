@@ -700,3 +700,30 @@ body { font-size: 15px; line-height: 1.5; }
 .nav2 .rail-logo svg { width: 28px !important; height: 28px !important; }
 :root.dark .nav2 .rail-logo { background: #3a2622; border-color: #5a3329; }
 .fleet-page .project-header .project-search { flex: 1; max-width: 420px; height: 32px; border: 1px solid var(--fx-line); border-radius: var(--fx-r); padding: 0 10px; font: inherit; font-size: 14px; background: #fff; }
+// Search fields in page toolbars span the full width; the filter select keeps its natural size beside it (Yomi 2026-11-18)
+.fleet-page .toolbar input[type=search] { flex: 1 1 auto !important; max-width: none !important; min-width: 240px; height: 36px; }
+.fleet-page .toolbar select { flex: 0 0 auto; height: 36px; }
+// Entry boxes span the full width (Yomi 2026-11-18): Fleet "What should the fleet do?" and Models "What should your computers work on?"
+.fleet-page .ask-card, .fleet-page .hero .ask, .fleet-home .ask .ask-card { max-width: none !important; width: 100% !important; margin-left: 0 !important; margin-right: 0 !important; }
+.fleet-page .hero, .fleet-home .ask { text-align: left !important; }
+.fleet-page .ask-note { text-align: left; }
+
+// Last viewed and project cards never overflow their slot (Yomi 2026-11-18: "Last viewed spacing ... overlapping")
+.fleet-page .project-grid-item { min-width: 0 !important; overflow: hidden; }
+.fleet-page .project-grid-item .project-card { width: 100% !important; max-width: 100% !important; min-width: 0 !important; box-sizing: border-box; }
+
+// Team page on the Fleet frame
+.team-edit .card { margin-bottom: 16px; }
+.team-edit .team-form-actions { display: flex; gap: 8px; margin-top: 16px; }
+.team-edit .team-members { border: 0 !important; }
+.team-edit .team-members td { padding: 8px 16px !important; vertical-align: middle; }
+.team-edit .team-members td.actions { text-align: right; white-space: nowrap; }
+.team-edit .card .p-4 { padding: 12px 16px !important; }
+// Labels overlay: the labels list opens in the right-hand panel over the page
+.fleet-page .work-tabs .labels-open { margin-inline-start: auto; align-self: center; height: 28px; padding: 0 10px; border: 1px solid var(--fx-line); border-radius: var(--fx-r); background: #fff; color: var(--text-strong); font: inherit; font-size: 13px; cursor: pointer; }
+.fleet-page .work-tabs .labels-open:hover, .fleet-page .work-tabs .labels-open[aria-expanded="true"] { background: var(--fx-grey); }
+.labels-drawer { top: 0 !important; width: min(520px, 100%) !important; z-index: 60 !important; padding-bottom: 24px; }
+.labels-drawer .fleet-page { padding: 12px 16px !important; }
+.labels-drawer .crumb, .labels-drawer .page-head, .labels-drawer .work-tabs { display: none !important; }
+.labels-drawer .columns { display: block !important; }
+.labels-drawer .columns > .column { width: 100% !important; max-width: none !important; padding: 0 !important; margin-bottom: 12px; }
