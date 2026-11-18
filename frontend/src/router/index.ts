@@ -423,6 +423,18 @@ const router = createRouter({
 			name: 'teams.edit',
 			component: () => import('@/views/teams/EditTeam.vue'),
 		},
+		// Fleet screens (ytadvisors fork, #1193): the dock home and the mission view
+		{
+			path: '/fleet',
+			name: 'fleet.home',
+			component: () => import('@/views/fleet/FleetHome.vue'),
+		},
+		{
+			path: '/fleet/missions/:id(\\d+)',
+			name: 'fleet.mission',
+			component: () => import('@/views/fleet/MissionView.vue'),
+			props: true,
+		},
 		{
 			path: '/labels',
 			name: 'labels.index',

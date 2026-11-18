@@ -20,6 +20,14 @@
 			</RouterLink>
 			<menu class="menu-list other-menu-items">
 				<li>
+					<RouterLink :to="{ name: 'fleet.home'}">
+						<span class="menu-item-icon icon">
+							<Icon icon="tachometer-alt" />
+						</span>
+						Fleet
+					</RouterLink>
+				</li>
+				<li>
 					<RouterLink
 						v-shortcut="SHORTCUTS.navigation.overview"
 						:to="{ name: 'home'}"
