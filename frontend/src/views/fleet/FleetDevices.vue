@@ -21,11 +21,12 @@
 			</div>
 			<h2 class="sec"><span class="sec-i" style="--c:#0f7b6c">▣</span>Fleet computers <span class="badge">{{ fleet.length }}</span><small>Paired with the hub: they take work, run local models and report back. You moderate them.</small></h2>
 			<table class="ntable">
-				<thead><tr><th>Computer</th><th>Status</th><th>Hardware</th><th>Model</th><th>Address</th><th>Work done</th><th>Last job</th><th class="r">Moderate</th></tr></thead>
+				<thead><tr><th>Computer</th><th>Status</th><th>Last 24 hours</th><th>Hardware</th><th>Model</th><th>Address</th><th>Work done</th><th>Last job</th><th class="r">Moderate</th></tr></thead>
 				<tbody>
 					<tr v-for="c in fleet" :key="c.name" :class="{sel: sel === (c.address || c.name)}" @click="sel = c.address || c.name">
 						<td class="name"><span class="dev" style="color:#0f7b6c">▣</span>{{ c.name }}<small class="member">{{ c.member }}</small></td>
 						<td><span :class="['pill', stateCls(c.state)]"><i />{{ c.state }}</span></td>
+						<td class="strip-cell"><StatusStrip v-if="presenceOf(c.address)" :slots="presenceOf(c.address)" compact /><span v-else class="muted">–</span></td>
 						<td class="muted">{{ c.chip || '?' }} · {{ c.memory_gb ?? '?' }} GB</td>
 						<td>{{ c.model || '–' }}</td>
 						<td class="mono">{{ c.address || '–' }}</td>
@@ -37,7 +38,7 @@
 							<button type="button" class="ghost danger" :disabled="!!asked[c.name]" @click="confirmRemove = c.name">Remove</button>
 						</td>
 					</tr>
-					<tr v-if="confirmRemove" class="confirm"><td colspan="8">Remove <b>{{ confirmRemove }}</b> from the fleet? It stops taking work at once and its access is turned off. It stays on the network and can pair again later; its history is kept. <button type="button" class="ghost danger" @click="ask('remove', confirmRemove); confirmRemove = ''">Remove</button> <button type="button" class="ghost" @click="confirmRemove = ''">Cancel</button></td></tr>
+					<tr v-if="confirmRemove" class="confirm"><td colspan="9">Remove <b>{{ confirmRemove }}</b> from the fleet? It stops taking work at once and its access is turned off. It stays on the network and can pair again later; its history is kept. <button type="button" class="ghost danger" @click="ask('remove', confirmRemove); confirmRemove = ''">Remove</button> <button type="button" class="ghost" @click="confirmRemove = ''">Cancel</button></td></tr>
 				</tbody>
 			</table>
 			<p v-if="!fleet.length" class="empty">No computer is paired yet. Add one from Enrollment.</p>
@@ -47,11 +48,12 @@
 			<p v-if="net" class="scan">Network {{ net.network }} · {{ net.online }} of {{ net.devices.length }} devices online · {{ net.with_risks }} with something to check · last scanned {{ ago(net.scanned_at) }} (every 10 minutes, read only)</p>
 			<p v-else class="notice">The network monitor has not reported yet.</p>
 			<table class="ntable">
-				<thead><tr><th>Device</th><th>Status</th><th>Type</th><th>Address</th><th>Open services</th><th>Firmware</th><th>Attention</th><th>Last seen</th></tr></thead>
+				<thead><tr><th>Device</th><th>Status</th><th>Last 24 hours</th><th>Type</th><th>Address</th><th>Open services</th><th>Firmware</th><th>Attention</th><th>Last seen</th></tr></thead>
 				<tbody>
 					<tr v-for="d in others" :key="d.ip" :class="{sel: sel === d.ip, off: !d.online}" @click="sel = d.ip">
 						<td class="name"><span class="dev" :style="{color: typeColor(d.type)}">{{ typeIcon(d.type) }}</span>{{ d.label }}<span v-if="d.kind !== 'network device'" class="role">{{ d.kind }}</span></td>
 						<td><span :class="['pill', d.online ? 'ok' : 'bad']"><i />{{ d.online ? 'online' : 'offline' }}</span></td>
+						<td class="strip-cell"><StatusStrip v-if="presenceOf(d.ip)" :slots="presenceOf(d.ip)" compact /><span v-else class="muted">–</span></td>
 						<td>{{ d.type }}<small v-if="d.maker && d.maker !== 'unknown'" class="muted"> · {{ d.maker }}</small></td>
 						<td class="mono">{{ d.ip }}</td>
 						<td class="muted">{{ d.ports.length ? d.ports.length + ' open' : '–' }}</td>
@@ -150,6 +152,7 @@
 
 <script setup lang="ts">
 import {computed, onMounted, onUnmounted, reactive, ref} from 'vue'
+import StatusStrip from '@/components/fleet/StatusStrip.vue'
 import {CONSOLE_URL, ago, escapeHtml, fleetView, onFleetChange, stationProjects, vkPost, vkPut, type FleetView} from '@/fleet/api'
 import {useTitle} from '@/composables/useTitle'
 
@@ -201,6 +204,7 @@ async function ask(action: 'pause' | 'resume' | 'remove', name: string) {
 		asked[name] = {action, error: 'could not record it: ' + (e?.message || e)}
 	}
 }
+const presenceOf = (ip?: string) => (ip && (view.value as any)?.presence?.[ip]) || ''
 const selNet = computed<any>(() => (net.value?.devices || []).find((d: any) => d.ip === sel.value) || null)
 const selDevice = computed(() => all.value.find(c => c.address === sel.value || c.name === sel.value) || null)
 const selLog = computed(() => (view.value?.log || []).filter(l => l.who === (selDevice.value?.name || selNet.value?.label) || l.who === sel.value || (l.detail || '').includes(sel.value + ' ')).slice(0, 14))
@@ -272,4 +276,5 @@ tr.confirm td { background: #fdf3f1; font-size: .86rem; }
 .modmsg.bad { color: #5d1715; }
 .member { margin-inline-start: .5rem; font-size: .74rem; color: var(--text-light); font-family: ui-monospace, Menlo, monospace; }
 .kind-line { margin: -.2rem 1.1rem .6rem; font-size: .8rem; color: var(--text-light); }
+.strip-cell { min-width: 160px; width: 200px; }
 </style>

@@ -26,6 +26,16 @@
 			<div class="tile"><span>Errors</span><b :class="{red: errTotal}">{{ errTotal }}</b><small>{{ range === '24h' ? 'last 24 hours' : 'last 7 days' }}</small></div>
 		</section>
 
+		<section v-if="!dev" class="card monitors">
+			<header><span>Availability, last 24 hours</span><span class="muted sm">one slot per 10-minute network scan</span></header>
+			<div v-for="m in monitorRows" :key="m.key" class="mon" @click="dev = m.key">
+				<span class="mon-name"><b>{{ m.title }}</b><small class="muted">{{ m.kind }}</small></span>
+				<StatusStrip :slots="m.slots" compact :title-for="slotTitle" />
+				<span class="mon-pct muted">{{ m.pct }}</span>
+			</div>
+			<div v-if="!monitorRows.length" class="empty">No scans recorded yet.</div>
+		</section>
+
 		<section v-else-if="current" class="devcard">
 			<header>
 				<div><h2>{{ current.title }}</h2><small class="muted">{{ current.kind }} · {{ current.address || 'no address' }}</small></div>
@@ -37,7 +47,7 @@
 			</dl>
 			<div class="avail">
 				<div class="c-head"><b>Availability, last 24 hours</b><span class="muted">{{ availPct }}</span></div>
-				<div class="strip"><i v-for="(s, i) in strip" :key="i" :class="s === '1' ? 'up' : s === '0' ? 'down' : 'none'" :title="slotTitle(i, s)" /></div>
+				<StatusStrip :slots="strip.join('')" legend :title-for="slotTitle" />
 				<div class="axis"><span>24 h ago</span><span>12 h ago</span><span>now</span></div>
 			</div>
 			<div v-if="current.risks.length" class="risks"><b>Worth checking</b><div v-for="(r, i) in current.risks" :key="i" class="risk">{{ r }}</div></div>
@@ -83,6 +93,7 @@
 <script setup lang="ts">
 import {computed, onMounted, onUnmounted, ref} from 'vue'
 import {ago, fleetView, hubTaskHref, onFleetChange, type FleetView} from '@/fleet/api'
+import StatusStrip from '@/components/fleet/StatusStrip.vue'
 import {useTitle} from '@/composables/useTitle'
 
 useTitle('Live monitoring')
@@ -143,6 +154,25 @@ const strip = computed<string[]>(() => {
 const availPct = computed(() => {
 	const seen = strip.value.filter(s => s !== '.')
 	return seen.length ? `${Math.round((seen.filter(s => s === '1').length / seen.length) * 100)}% of ${seen.length} scans` : 'no scans recorded yet'
+})
+const pctOf = (row: string) => {
+	const seen = row.split('').filter(s => s !== '.')
+	return seen.length ? `${Math.round((seen.filter(s => s === '1').length / seen.length) * 100)}%` : '–'
+}
+const monitorRows = computed(() => {
+	const p = (view.value as any)?.presence || {}
+	const rows: any[] = []
+	for (const c of fleetComputers.value) {
+		if (c.address && p[c.address]) {
+			rows.push({key: 'fleet:' + c.name, title: c.name, kind: 'fleet computer', slots: p[c.address], pct: pctOf(p[c.address])})
+		}
+	}
+	for (const d of netDevices.value) {
+		if (p[d.ip]) {
+			rows.push({key: 'net:' + d.ip, title: d.label, kind: d.type, slots: p[d.ip], pct: pctOf(p[d.ip])})
+		}
+	}
+	return rows
 })
 const slotTitle = (i: number, s: string) => `${new Date(Date.now() - (143 - i) * 600000).toISOString().slice(11, 16)} UTC: ${s === '1' ? 'up' : s === '0' ? 'not seen' : 'no scan'}`
 const matches = (l: any) => !current.value || current.value.names.includes(l.who) || (current.value.ip && `${l.detail} `.includes(current.value.ip + ' '))
@@ -218,4 +248,14 @@ onUnmounted(() => stop())
 .strip .none { background: #f1f1ef; }
 .risks { margin-top: .8rem; }
 .risk { margin-top: .3rem; padding: .45rem .7rem; border-radius: 8px; background: #fdecc8; color: #402c1b; font-size: .85rem; }
+.monitors { margin-bottom: 16px; }
+.monitors > header { display: flex; justify-content: space-between; }
+.mon { display: grid; grid-template-columns: minmax(180px, 260px) 1fr 52px; gap: 16px; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--border-light); cursor: pointer; }
+.mon:last-child { border-bottom: 0; }
+.mon:hover { background: var(--fx-strip, #f7f7f9); }
+.mon-name { display: flex; flex-direction: column; min-width: 0; }
+.mon-name b { font-size: 14px; font-weight: 500; color: var(--text-strong); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mon-name small { font-size: 12px; }
+.mon-pct { text-align: right; font-size: 12px; }
+.sm { font-size: 12px; font-weight: 400; }
 </style>
