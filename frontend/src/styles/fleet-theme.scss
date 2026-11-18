@@ -6,11 +6,12 @@
 
 :root {
   // Accent: one violet for actions and links; a bright brand orange only for the main "create" action.
-  --primary-h: 247deg;
-  --primary-s: 84%;
-  --primary-l: 61%;
+  --primary-h: 211deg;
+  --primary-s: 77%;
+  --primary-l: 51%;
   --fleet-brand: #ff4f00;
-  --fleet-quiet: #f6f3ee;
+  --fleet-quiet: rgba(55, 53, 47, .06);
+  --fleet-sidebar: #f7f6f3;
 
   // Warm neutrals (Zapier-like) instead of cool blue-greys.
   --grey-50: hsl(36, 33%, 98%);
@@ -25,13 +26,13 @@
   --grey-700: hsl(10, 9%, 24%);
   --grey-800: hsl(5, 14%, 15%);
   --grey-900: hsl(0, 21%, 10%);
-  --site-background: hsl(40, 100%, 99%);
-  --text: hsl(10, 9%, 24%);
-  --text-strong: hsl(0, 21%, 10%);
-  --text-light: hsl(20, 5%, 44%);
-  --text-muted: hsl(20, 5%, 42%);
-  --border: hsl(33, 18%, 89%);
-  --border-light: hsl(36, 29%, 93%);
+  --site-background: #ffffff;
+  --text: #37352f;
+  --text-strong: #2f2e2a;
+  --text-light: #787774;
+  --text-muted: #787774;
+  --border: #e9e9e7;
+  --border-light: #f1f1ef;
 
   // Status colours, a little calmer.
   --success-h: 152deg; --success-s: 97%; --success-l: 26%;
@@ -52,7 +53,8 @@
     @media screen {
       --primary-l: 70%;
       --fleet-brand: #ff6a26;
-      --fleet-quiet: hsl(30, 7%, 12%);
+      --fleet-quiet: rgba(255, 255, 255, .055);
+      --fleet-sidebar: #202020;
       --grey-50: hsl(30, 8%, 7%);
       --grey-100-hsl: 30, 7%, 9%;
       --grey-100: hsl(var(--grey-100-hsl));
@@ -65,7 +67,7 @@
       --grey-700: hsl(30, 9%, 82%);
       --grey-800: hsl(30, 12%, 90%);
       --grey-900: hsl(30, 18%, 95%);
-      --site-background: hsl(30, 8%, 6%);
+      --site-background: #191919;
       --text: hsl(30, 9%, 82%);
       --text-strong: hsl(30, 18%, 95%);
       --text-light: hsl(30, 5%, 62%);
@@ -109,7 +111,7 @@ body { font-size: 15px; line-height: 1.5; }
 
 // Sidebar: calm, warm, the active item a quiet block instead of a coloured bar.
 .menu-container {
-  background: var(--site-background) !important;
+  background: var(--fleet-sidebar) !important;
   border-inline-end: 1px solid var(--border);
 }
 .menu .menu-list a, .menu .menu-list .list-menu-link {
@@ -174,3 +176,22 @@ body { font-size: 15px; line-height: 1.5; }
 .action-buttons .button.is-danger, .action-buttons .button.is-danger.is-primary { background: transparent !important; border-color: transparent !important; color: var(--danger) !important; font-weight: 600 !important; }
 .action-buttons .button.is-danger:hover { background: hsla(var(--danger-h), var(--danger-s), var(--danger-l), .08) !important; }
 .action-heading, .action-buttons .heading { text-transform: uppercase; letter-spacing: .08em; font-size: .7rem; color: var(--text-light); margin-block-start: .6rem; }
+
+
+// Notion direction (Yomi 2026-11-18: "I like the colorful icons and design of notion ... It has the asthetic I want us to use").
+// Colourful sidebar icons, one colour per section, as Notion does for Projects, Tasks, Meetings and Docs.
+.other-menu-items li:nth-child(1) .menu-item-icon { color: #e16b16; }   // Fleet
+.other-menu-items li:nth-child(2) .menu-item-icon { color: #2383e2; }   // Overview
+.other-menu-items li:nth-child(3) .menu-item-icon { color: #e03e3e; }   // Upcoming
+.other-menu-items li:nth-child(4) .menu-item-icon { color: #0f7b6c; }   // Projects
+.other-menu-items li:nth-child(5) .menu-item-icon { color: #9065b0; }   // Labels
+.other-menu-items li:nth-child(6) .menu-item-icon { color: #d9730d; }   // Teams
+.other-menu-items li:nth-child(7) .menu-item-icon { color: #9b9a97; }   // Trash
+.menu .menu-list a, .menu .menu-list .list-menu-link { font-weight: 500; font-size: .93rem; }
+.menu .menu-list a.router-link-exact-active, .menu .menu-list a.router-link-active { background: rgba(55, 53, 47, .08) !important; }
+
+// Headings as in Notion: large, bold, tight.
+.title.is-1, h1.title, .project-title, .heading .title { font-size: 2.4rem !important; font-weight: 700 !important; letter-spacing: -.02em; }
+
+// Status pills in Notion's soft colours.
+.tag { border-radius: 5px !important; font-weight: 500; }
