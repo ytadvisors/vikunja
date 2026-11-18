@@ -560,3 +560,57 @@ body { font-size: 15px; line-height: 1.5; }
 :root.dark .task-view .side-strip { background: #26262b; }
 // In the icon rail the attribution text has no room; it stays in the full sidebar (AGPL "Powered by Vikunja")
 .menu-container.is-rail .menu-bottom-link { display: none !important; }
+
+// ---------------------------------------------------------------------------------------------------------------------------
+// Bordered blocks everywhere (Yomi 2026-11-18: "Let's have bordered blocks consistent accross the application.")
+// A block = white, 1 px line, radius 6, a grey header strip (title + actions), padded content. No box inside a box.
+// ---------------------------------------------------------------------------------------------------------------------------
+.fx-block, .fleet-home .lists > .list, .fleet-home .recs, .fleet-home .analytics, .fleet-home .block {
+  background: #fff; border: 1px solid var(--fx-line); border-radius: var(--fx-r); overflow: hidden; margin-bottom: 16px;
+}
+.fx-block > .fx-head, .fleet-home .lists > .list > h3, .fleet-home .recs > h2, .fleet-home .analytics > .a-head, .fleet-home .block > h2 {
+  display: flex; align-items: center; gap: 8px; margin: 0 !important; padding: 8px 12px !important; min-height: 40px;
+  background: var(--fx-grey); border-bottom: 1px solid var(--fx-line) !important; font-size: 14px !important; font-weight: 600 !important; color: var(--text-strong) !important;
+}
+.fleet-home .lists > .list > h3 a { color: var(--text-strong) !important; }
+.fleet-home .lists { gap: 16px !important; margin: 16px 0 !important; }
+.fleet-home .lists > .list { margin: 0; }
+.fleet-home .lists > .list > :not(h3) { padding-left: 12px; padding-right: 12px; }
+.fleet-home .lists > .list .li { border-bottom: 1px solid var(--border-light); }
+.fleet-home .lists > .list .li:last-child { border-bottom: 0; }
+.fleet-home .lists > .list .placeholder { margin: 12px; background: var(--fx-grey); }
+.fleet-home .recs .rec { padding: 10px 12px !important; margin: 0; }
+.fleet-home .recs .rec:last-child { border-bottom: 0; }
+.fleet-home .analytics > .a-head { justify-content: space-between; }
+.fleet-home .analytics > .a-head h2 { font-size: 14px !important; margin: 0 !important; }
+.fleet-home .analytics .cards { gap: 0 !important; margin: 0 !important; }
+.fleet-home .analytics .cards.small { border-top: 1px solid var(--fx-line); }
+.fleet-home .analytics .cards .card { border: 0 !important; border-right: 1px solid var(--fx-line) !important; border-radius: 0 !important; box-shadow: none !important; background: #fff !important; padding: 12px !important; }
+.fleet-home .analytics .cards .card:last-child { border-right: 0 !important; }
+.fleet-home .block > .ntable, .fx-block > .ntable, .card > .ntable { border: 0 !important; border-radius: 0 !important; }
+.fleet-home .ask-card { border: 1px solid var(--fx-line) !important; border-radius: var(--fx-r) !important; box-shadow: none !important; }
+:root.dark .fx-block, :root.dark .fleet-home .lists > .list, :root.dark .fleet-home .recs, :root.dark .fleet-home .analytics, :root.dark .fleet-home .block, :root.dark .fleet-home .analytics .cards .card { background: #26262b !important; }
+
+// The collapsed rail is white, with a hairline edge
+.menu-container.is-rail, .menu-container.is-rail .menu, .menu-container.is-rail .rail-toggle.edge-toggle { background: #fff !important; }
+.menu-container.is-rail { border-right: 1px solid var(--fx-line); }
+.menu-container.is-rail .menu-list a:hover, .menu-container.is-rail .menu-list a.router-link-active { background: var(--fx-grey) !important; }
+:root.dark .menu-container.is-rail, :root.dark .menu-container.is-rail .menu, :root.dark .menu-container.is-rail .rail-toggle.edge-toggle { background: #26262b !important; }
+// Recommendations on Devices: a standard block with white cards (Yomi 2026-11-18: "make the recommendations white background")
+.fleet-page section.recs { background: #fff; border: 1px solid var(--fx-line); border-radius: var(--fx-r); overflow: hidden; margin-top: 16px !important; }
+.fleet-page section.recs > h2 { margin: 0 !important; padding: 8px 12px !important; min-height: 40px; background: var(--fx-grey); border-bottom: 1px solid var(--fx-line); font-size: 14px !important; font-weight: 600 !important; }
+.fleet-page section.recs .rec-cards { padding: 12px; gap: 12px !important; }
+.fleet-page section.recs .rec-card { background: #fff !important; border: 1px solid var(--fx-line) !important; border-radius: var(--fx-r) !important; padding: 12px !important; }
+.fleet-page section.recs .rec-card h4 { font-size: 14px !important; font-weight: 600 !important; }
+.fleet-page section.recs .rec-card p { font-size: 13px !important; }
+:root.dark .fleet-page section.recs, :root.dark .fleet-page section.recs .rec-card { background: #26262b !important; }
+// More room inside the Fleet page blocks (Yomi 2026-11-18: "a little padding for recommendations, recent activity, computers, and missions")
+.fleet-home .lists > .list > h3, .fleet-home .recs > h2, .fleet-home .analytics > .a-head, .fleet-home .block > h2, .fleet-page section.recs > h2, .fx-block > .fx-head { padding: 10px 16px !important; }
+.fleet-home .lists > .list > :not(h3) { padding-left: 16px !important; padding-right: 16px !important; }
+.fleet-home .lists > .list .li { padding-top: 10px !important; padding-bottom: 10px !important; }
+.fleet-home .lists > .list > :nth-child(2) { margin-top: 4px; }
+.fleet-home .lists > .list > :last-child { margin-bottom: 4px; }
+.fleet-home .lists > .list .placeholder { margin: 16px !important; }
+.fleet-home .recs .rec { padding: 12px 16px !important; }
+.fleet-home .block .ntable th, .fleet-home .block .ntable td { padding: 10px 16px !important; }
+.fleet-home .analytics .cards .card { padding: 16px !important; }
