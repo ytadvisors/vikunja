@@ -907,3 +907,5 @@ body { font-size: 15px; line-height: 1.5; }
 // Each field's header row spans its column, so the × lines up with the right edge of the boxes below it
 .app-content .task-view .columns.details > .column > .is-flex.is-justify-content-space-between { width: 100% !important; align-items: center; }
 .app-content .task-view .columns.details > .column > .is-flex.is-justify-content-space-between > .remove { margin-left: auto; padding-right: 0 !important; }
+// Devices > Enrollment: room above "Waiting for approval" (Yomi 2026-11-18)
+.fleet-page h2.mt, .fleet-page .mt { margin-top: 24px !important; }
