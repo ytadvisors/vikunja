@@ -913,7 +913,7 @@
     "showMenu": "Show the menu",
     "hideMenu": "Hide the menu",
     "forExample": "For example:",
-    "welcomeBack": "Welcome Back!",
+    "welcomeBack": "Welcome to Fleet HQ",
     "custom": "Custom",
     "id": "ID",
     "created": "Created at",
@@ -1521,9 +1521,9 @@
     "url": "Vikunja URL",
     "urlPlaceholder": "eg. https://localhost:3456",
     "change": "change",
-    "use": "Using Vikunja installation at {0}",
+    "use": "Connected to {0}",
     "error": "Could not find or use Vikunja installation at \"{domain}\". Please check if the url has the correct format and you can reach it when accessing it directly and try again.",
-    "success": "Using Vikunja installation at \"{domain}\".",
+    "success": "Connected to \"{domain}\".",
     "urlRequired": "A url is required."
   },
   "loadingError": {

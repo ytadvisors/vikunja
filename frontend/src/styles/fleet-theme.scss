@@ -181,12 +181,14 @@ body { font-size: 15px; line-height: 1.5; }
 // Notion direction (Yomi 2026-11-18: "I like the colorful icons and design of notion ... It has the asthetic I want us to use").
 // Colourful sidebar icons, one colour per section, as Notion does for Projects, Tasks, Meetings and Docs.
 .other-menu-items li:nth-child(1) .menu-item-icon { color: #e16b16; }   // Fleet
-.other-menu-items li:nth-child(2) .menu-item-icon { color: #2383e2; }   // Overview
-.other-menu-items li:nth-child(3) .menu-item-icon { color: #e03e3e; }   // Upcoming
-.other-menu-items li:nth-child(4) .menu-item-icon { color: #0f7b6c; }   // Projects
-.other-menu-items li:nth-child(5) .menu-item-icon { color: #9065b0; }   // Labels
-.other-menu-items li:nth-child(6) .menu-item-icon { color: #d9730d; }   // Teams
-.other-menu-items li:nth-child(7) .menu-item-icon { color: #9b9a97; }   // Trash
+.other-menu-items li:nth-child(2) .menu-item-icon { color: #0f7b6c; }   // Devices
+.other-menu-items li:nth-child(3) .menu-item-icon { color: #ad1a72; }   // Live monitoring
+.other-menu-items li:nth-child(4) .menu-item-icon { color: #2383e2; }   // Overview
+.other-menu-items li:nth-child(5) .menu-item-icon { color: #e03e3e; }   // Upcoming
+.other-menu-items li:nth-child(6) .menu-item-icon { color: #448361; }   // Projects
+.other-menu-items li:nth-child(7) .menu-item-icon { color: #9065b0; }   // Labels
+.other-menu-items li:nth-child(8) .menu-item-icon { color: #d9730d; }   // Teams
+.other-menu-items li:nth-child(9) .menu-item-icon { color: #9b9a97; }   // Trash
 .menu .menu-list a, .menu .menu-list .list-menu-link { font-weight: 500; font-size: .93rem; }
 .menu .menu-list a.router-link-exact-active, .menu .menu-list a.router-link-active { background: rgba(55, 53, 47, .08) !important; }
 
@@ -195,3 +197,11 @@ body { font-size: 15px; line-height: 1.5; }
 
 // Status pills in Notion's soft colours.
 .tag { border-radius: 5px !important; font-weight: 500; }
+
+// Brand (Yomi 2026-11-18: "Can we change the logo from Vikunja to YT Advisors?" "And also the the name"): the login page
+// drops Vikunja's llama artwork for the YT Advisors navy, and the overview drops the llama illustration.
+.no-auth-wrapper { background-image: none !important; background-color: var(--site-background) !important; }
+.no-auth-wrapper .image {
+  background: linear-gradient(160deg, #001f3f 0%, #0b2f57 55%, #1d4a7a 100%) !important;
+}
+.llama-cool { display: none !important; }

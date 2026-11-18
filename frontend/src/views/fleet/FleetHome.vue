@@ -24,7 +24,8 @@
 			</form>
 			<p v-if="giveError" class="err">{{ giveError }}</p>
 			<nav class="quick">
-				<a href="#computers">▣ Computers</a>
+				<RouterLink :to="{name: 'fleet.devices'}">▣ Devices</RouterLink>
+				<RouterLink :to="{name: 'fleet.live'}">◉ Live monitoring</RouterLink>
 				<a href="#recommendations">◉ Recommendations</a>
 				<RouterLink :to="{name: 'home'}">☰ Tasks</RouterLink>
 			</nav>
@@ -32,7 +33,7 @@
 
 		<section class="lists">
 			<div class="list">
-				<h3><RouterLink to="#computers">Computers</RouterLink><span class="badge">{{ view?.computers.length ?? 0 }}</span></h3>
+				<h3><RouterLink :to="{name: 'fleet.devices'}">Computers</RouterLink><span class="badge">{{ view?.computers.length ?? 0 }}</span></h3>
 				<div v-if="view && !view.computers.length" class="empty">No computer has joined yet.</div>
 				<a v-for="c in view?.computers || []" :key="c.name" class="li" href="#computers" :title="`${c.chip} · ${c.memory_gb} GB · ${c.model}`">
 					<span class="li-icon" :class="c.state === 'connected' ? 'on' : 'off'">▣</span>
@@ -51,7 +52,7 @@
 				</RouterLink>
 			</div>
 			<div class="list">
-				<h3>Recent activity</h3>
+				<h3><RouterLink :to="{name: 'fleet.live'}">Recent activity</RouterLink></h3>
 				<div v-for="(l, i) in (view?.log || []).slice(0, 5)" :key="i" class="li static">
 					<span class="li-icon hist">↺</span>
 					<span class="li-name"><span class="muted">{{ l.who || 'hub' }} /</span> {{ l.what }}</span>

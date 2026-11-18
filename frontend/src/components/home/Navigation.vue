@@ -28,6 +28,22 @@
 					</RouterLink>
 				</li>
 				<li>
+					<RouterLink :to="{ name: 'fleet.devices'}">
+						<span class="menu-item-icon icon">
+							<Icon icon="sitemap" />
+						</span>
+						Devices
+					</RouterLink>
+				</li>
+				<li>
+					<RouterLink :to="{ name: 'fleet.live'}">
+						<span class="menu-item-icon icon">
+							<Icon icon="bolt" />
+						</span>
+						Live monitoring
+					</RouterLink>
+				</li>
+				<li>
 					<RouterLink
 						v-shortcut="SHORTCUTS.navigation.overview"
 						:to="{ name: 'home'}"

@@ -430,6 +430,16 @@ const router = createRouter({
 			component: () => import('@/views/fleet/FleetHome.vue'),
 		},
 		{
+			path: '/fleet/devices',
+			name: 'fleet.devices',
+			component: () => import('@/views/fleet/FleetDevices.vue'),
+		},
+		{
+			path: '/fleet/live',
+			name: 'fleet.live',
+			component: () => import('@/views/fleet/FleetLive.vue'),
+		},
+		{
 			path: '/fleet/missions/:id(\\d+)',
 			name: 'fleet.mission',
 			component: () => import('@/views/fleet/MissionView.vue'),

@@ -171,8 +171,8 @@ function getBuildConfig(env: Record<string, string>) {
 				injectRegister: false,
 				useCredentials: true,
 				manifest: {
-					name: 'Vikunja',
-					short_name: 'Vikunja',
+					name: 'Fleet HQ by YT Advisors',
+					short_name: 'Fleet HQ',
 					theme_color: '#1973ff',
 					icons: [
 						{
